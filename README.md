@@ -112,7 +112,7 @@ clinical-node/
 ├── cron_refine.py          # 72-hour refinement cycle
 ├── state_manager.py        # cases.json CRUD + minutes persistence
 ├── .streamlit/
-│   └── config.toml         # Theme (light, Mayo Clinic palette)
+│   └── config.toml         # Theme (light, Clinic palette)
 ├── .env.example            # Credential template
 ├── requirements.txt
 └── README.md
