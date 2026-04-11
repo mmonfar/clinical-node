@@ -1,0 +1,41 @@
+# ── Secrets & credentials ──────────────────────────────────────────────────
+.env
+*.pem
+*.key
+secrets.toml
+
+# ── Runtime data (patient-adjacent: never commit) ──────────────────────────
+cases.json
+minutes/
+.refine_state.json
+
+# ── Python ─────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# ── Virtual environments ────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+.env/
+
+# ── Claude Code internal ────────────────────────────────────────────────────
+.claude/
+
+# ── OS artefacts ────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE ─────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace

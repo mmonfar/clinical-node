@@ -1,0 +1,5 @@
+streamlit==1.56.0
+openai==2.31.0
+biopython==1.87
+python-dotenv==1.2.2
+requests==2.33.1
