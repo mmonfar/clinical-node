@@ -39,3 +39,19 @@ desktop.ini
 .idea/
 *.sublime-project
 *.sublime-workspace
+
+# ── Node / Remotion ────────────────────────────────────────────────────────
+node_modules/
+video/node_modules/
+video/out/
+.npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ── Build Artifacts ────────────────────────────────────────────────────────
+video/out/
+*.mp4
+*.mov
+**/.claude/

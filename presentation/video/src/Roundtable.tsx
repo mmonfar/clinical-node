@@ -12,11 +12,25 @@ const AVATAR_ANGLES = [0, 60, 120, 180, 240, 300];
 const CS = PHASES.CLASH.start;
 const GS = PHASES.GOVERNANCE.start;
 
-// Avatar entry: stagger every ~27 frames (scaled from 20)
+// Avatar entry: stagger every ~27 frames
 const ENTER_FRAMES  = [CS + 3,  CS + 30, CS + 57, CS + 84, CS + 111, CS + 138];
 
-// Speech bubble appearances: staggered across the clash phase
-const BUBBLE_FRAMES = [CS + 40, CS + 93, CS + 147, CS + 200, CS + 27, CS + 120];
+// Speech bubbles — fully sequential, no overlap.
+// Each bubble shows for BUBBLE_DURATION frames (75 = 2.5 s) with a 10-frame
+// gap between speakers.  Order: ICU → Gen Surgery → Vascular → Cardiology →
+// Pharmacy → Hematology.  Last bubble ends at CS+660, well before GS.
+//
+// Array indexed by ROUNDTABLE_CAST position:
+//   [0]=ICU  [1]=Vascular  [2]=Cardiology  [3]=Pharmacy  [4]=GenSurg  [5]=Hematology
+const BUBBLE_DURATION = 75; // frames per bubble (2.5 s)
+const BUBBLE_FRAMES   = [
+  CS + 160, // [0] ICU / Intensivist        160–235
+  CS + 330, // [1] Vascular Surgery          330–405
+  CS + 415, // [2] Cardiology                415–490
+  CS + 500, // [3] Clinical Pharmacy         500–575
+  CS + 245, // [4] General Surgery           245–320
+  CS + 585, // [5] Hematology                585–660
+];
 
 const RISKS = [
   { label: "In-stent thrombosis",           level: "High",   color: C.danger  },
@@ -274,12 +288,12 @@ export const Roundtable: React.FC = () => {
   const govStart     = GS;
   const isGovernance = frame >= govStart;
 
-  // Conflict arrows: appear ~200 frames into clash phase (scaled from 150)
-  const conflictOpacity = interpolate(frame, [CS + 200, CS + 233], [0, 1],
+  // Conflict arrows: appear after Cardiology (index 2) finishes speaking (CS+490)
+  const conflictOpacity = interpolate(frame, [CS + 500, CS + 530], [0, 1],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
-  // Systemic gap banner: ~224 frames into clash phase (scaled from 168)
-  const gapOpacity = interpolate(frame, [CS + 224, CS + 240], [0, 1],
+  // Systemic gap banner: follows conflict arrows
+  const gapOpacity = interpolate(frame, [CS + 530, CS + 550], [0, 1],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
   // Verified seal: enters 80 frames into governance phase (scaled from 60)
@@ -301,8 +315,8 @@ export const Roundtable: React.FC = () => {
 
       {/* HOD avatars */}
       {ROUNDTABLE_CAST.map((spec, i) => {
-        const hasConflict = frame >= CS + 200;
-        const isSpeaking  = frame >= BUBBLE_FRAMES[i] && frame < BUBBLE_FRAMES[i] + 60;
+        const hasConflict = frame >= CS + 415;
+        const isSpeaking  = frame >= BUBBLE_FRAMES[i] && frame < BUBBLE_FRAMES[i] + BUBBLE_DURATION;
         return (
           <HOD_Avatar
             key={spec.name}

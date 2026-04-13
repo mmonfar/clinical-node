@@ -1,0 +1,25 @@
+{
+  "name": "cin-presentation",
+  "version": "1.0.0",
+  "description": "Clinical Intelligence Node — MDT Walkthrough Video",
+  "scripts": {
+    "start": "npx remotion studio",
+    "render": "npx remotion render CINWalkthrough out/video.mp4 --codec=h264"
+  },
+  "dependencies": {
+    "remotion": "4.0.290",
+    "@remotion/bundler": "4.0.290",
+    "@remotion/cli": "4.0.290",
+    "@remotion/renderer": "4.0.290",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.1",
+    "typescript": "5.4.5"
+  },
+  "remotion": {
+    "entryPoint": "src/Root.tsx"
+  }
+}

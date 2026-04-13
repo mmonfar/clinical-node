@@ -1,13 +1,15 @@
 // ── Timing ───────────────────────────────────────────────────────────────────
 export const FPS           = 30;
-export const TOTAL_FRAMES  = 1200;  // 40 seconds (0.75× original speed)
+export const TOTAL_FRAMES  = 1680;  // 56 seconds — extended for readable speech bubbles
 
 /**
  * Phase start/end in frames at 30 fps.
- * All durations scaled to 0.75× of the original (×1.333).
  *
  * Phases 0-2 are narrative story slides.
  * Phases 3-6 are the live demo sequence.
+ *
+ * CLASH is extended to 680 frames so all 6 speech bubbles appear
+ * sequentially (75 frames / 2.5 s each) with no overlap.
  */
 export const PHASES = {
   TITLE:          { start: 0,    end: 120  }, // 0 – 4 s    Title card
@@ -15,8 +17,8 @@ export const PHASES = {
   SOLUTION:       { start: 280,  end: 440  }, // 9.3 – 14.7 s The platform
   EVIDENCE_SCAN:  { start: 440,  end: 560  }, // 14.7 – 18.7 s Researcher
   MATRIX:         { start: 560,  end: 760  }, // 18.7 – 25.3 s Evidence Matrix
-  CLASH:          { start: 760,  end: 1000 }, // 25.3 – 33.3 s MDT Roundtable
-  GOVERNANCE:     { start: 1000, end: 1200 }, // 33.3 – 40 s   Governance / Audit
+  CLASH:          { start: 760,  end: 1440 }, // 25.3 – 48 s   MDT Roundtable (680 frames)
+  GOVERNANCE:     { start: 1440, end: 1680 }, // 48 – 56 s     Governance / Audit
 } as const;
 
 // ── Scale constants — tuned for 1920 × 1080 ──────────────────────────────────
