@@ -5,6 +5,7 @@ Clinical Intelligence Node – Streamlit frontend v1.4.
 360-degree MDT roundtable with Risk Heatmap, Gap-Finder, and EPR export.
 """
 
+import html
 import re
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -343,9 +344,20 @@ def _specialty_avatar(specialty: str) -> str:
     return "⚕️"
 
 
+def _e(value) -> str:
+    """Escape model / PubMed text before it goes into unsafe_allow_html markup."""
+    return html.escape(str(value), quote=True)
+
+
+def _safe_url(url: str) -> str:
+    """Only http(s) links are rendered; anything else (javascript:, data:) is dropped."""
+    url = str(url or "").strip()
+    return _e(url) if url.lower().startswith(("https://", "http://")) else ""
+
+
 def _risk_pill_html(level: str) -> str:
     cls = {"High": "risk-high", "Medium": "risk-medium", "Low": "risk-low"}.get(level, "risk-low")
-    return f'<span class="risk-pill {cls}">{level}</span>'
+    return f'<span class="risk-pill {cls}">{_e(level)}</span>'
 
 
 def _summary_for_chat(output: dict) -> str:
@@ -524,10 +536,10 @@ with col_chat:
         content = msg["content"]
         if role == "user":
             chat_html += (
-                f'<div class="msg-user"><div class="msg-role-label">You</div>{content}</div>'
+                f'<div class="msg-user"><div class="msg-role-label">You</div>{_e(content)}</div>'
             )
         else:
-            html_c = content
+            html_c = _e(content)
             html_c = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", html_c)
             html_c = re.sub(r"`(.+?)`",        r"<code>\1</code>",     html_c)
             html_c = html_c.replace("\n- ", "<br>• ")
@@ -674,7 +686,7 @@ with col_panel:
             f'<span style="font-weight:700;color:#002868;">{case_id}</span>'
             f'&nbsp;&nbsp;{_status_badge_html(status_str)}'
             f'<span style="font-size:0.75rem;color:#5A6A80;float:right;">'
-            f'{output.get("timestamp","")[:10]}</span>'
+            f'{_e(output.get("timestamp","")[:10])}</span>'
             f'</div>',
             unsafe_allow_html=True,
         )
@@ -691,7 +703,7 @@ with col_panel:
             # Critical info gap banner — top of everything
             gaps_missing = output.get("critical_info_missing", [])
             if gaps_missing:
-                items_html = "".join(f"<li>{g}</li>" for g in gaps_missing)
+                items_html = "".join(f"<li>{_e(g)}</li>" for g in gaps_missing)
                 st.markdown(
                     f'<div class="critical-gap-banner">'
                     f"⚠️ CRITICAL INFORMATION GAP — management may change once resolved:"
@@ -704,10 +716,10 @@ with col_panel:
                 '<div class="card card-blue">'
                 '<div style="font-weight:600;color:#002868;font-size:0.85rem;margin-bottom:0.5rem;">SBAR</div>'
                 f'<div style="font-size:0.87rem;color:#1A2332;">'
-                f'<strong>S</strong>&nbsp;{sbar.get("situation","")}<br><br>'
-                f'<strong>B</strong>&nbsp;{sbar.get("background","")}<br><br>'
-                f'<strong>A</strong>&nbsp;{sbar.get("assessment","")}<br><br>'
-                f'<strong>R</strong>&nbsp;{sbar.get("recommendation","")}'
+                f'<strong>S</strong>&nbsp;{_e(sbar.get("situation",""))}<br><br>'
+                f'<strong>B</strong>&nbsp;{_e(sbar.get("background",""))}<br><br>'
+                f'<strong>A</strong>&nbsp;{_e(sbar.get("assessment",""))}<br><br>'
+                f'<strong>R</strong>&nbsp;{_e(sbar.get("recommendation",""))}'
                 f'</div></div>',
                 unsafe_allow_html=True,
             )
@@ -715,10 +727,10 @@ with col_panel:
             # Evidence tier + query
             tier_cls = _tier_css(tier)
             st.markdown(
-                f'<span class="{tier_cls}">{tier}</span>'
+                f'<span class="{tier_cls}">{_e(tier)}</span>'
                 f'&nbsp;<span class="chip">{n_articles} articles</span>'
-                f'&nbsp;<span class="chip" title="{evidence_meta.get("query","")}">'
-                f'Query: {evidence_meta.get("query","")[:38]}…</span>',
+                f'&nbsp;<span class="chip" title="{_e(evidence_meta.get("query",""))}">'
+                f'Query: {_e(evidence_meta.get("query","")[:38])}…</span>',
                 unsafe_allow_html=True,
             )
 
@@ -732,7 +744,7 @@ with col_panel:
                 )
                 heatmap_rows = "".join(
                     f'<div class="risk-row">'
-                    f'<span class="risk-label">{name}</span>'
+                    f'<span class="risk-label">{_e(name)}</span>'
                     f'{_risk_pill_html(level)}'
                     f'</div>'
                     for name, level in risk_heatmap.items()
@@ -749,7 +761,7 @@ with col_panel:
                     f'<div class="card card-green">'
                     f'<div style="font-size:0.75rem;font-weight:700;color:#1E8449;'
                     f'text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.35rem;">Rationale</div>'
-                    f'<div style="font-size:0.88rem;color:#1A2332;">{rationale}</div>'
+                    f'<div style="font-size:0.88rem;color:#1A2332;">{_e(rationale)}</div>'
                     f'</div>',
                     unsafe_allow_html=True,
                 )
@@ -761,7 +773,7 @@ with col_panel:
                     f'<div class="card card-blue">'
                     f'<div style="font-size:0.75rem;font-weight:700;color:#0057A8;'
                     f'text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.35rem;">MDT Final Recommendation</div>'
-                    f'<div style="font-size:0.88rem;color:#1A2332;">{final_rec}</div>'
+                    f'<div style="font-size:0.88rem;color:#1A2332;">{_e(final_rec)}</div>'
                     f'</div>',
                     unsafe_allow_html=True,
                 )
@@ -775,7 +787,7 @@ with col_panel:
                     unsafe_allow_html=True,
                 )
                 for r in recs:
-                    st.markdown(f'<div class="rec-item">{r}</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="rec-item">{_e(r)}</div>', unsafe_allow_html=True)
 
             # Caveats
             caveats = output.get("caveats", [])
@@ -786,7 +798,7 @@ with col_panel:
                     unsafe_allow_html=True,
                 )
                 for c in caveats:
-                    st.markdown(f'<div class="caveat-item">{c}</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="caveat-item">{_e(c)}</div>', unsafe_allow_html=True)
 
         # ── TAB 2: MDT Discussion ─────────────────────────────────────────────
         with tab2:
@@ -802,7 +814,7 @@ with col_panel:
             invited_specs = output.get("invited_specialists", [])
             if specs:
                 chips = " ".join(
-                    f'<span class="chip" style="background:#EBF0F8;">{s}</span>'
+                    f'<span class="chip" style="background:#EBF0F8;">{_e(s)}</span>'
                     + (f'<span class="chip" style="background:#FFF3CD;color:#856404;">invited</span>' if s in invited_specs else "")
                     for s in specs
                 )
@@ -831,8 +843,8 @@ with col_panel:
                     with st.chat_message("user", avatar=avatar):
                         st.markdown(
                             f'<div class="hod-header">'
-                            f'<span class="hod-name">{spec}</span>'
-                            + (f'<span class="hod-priority"> — {priority}</span>' if priority else "")
+                            f'<span class="hod-name">{_e(spec)}</span>'
+                            + (f'<span class="hod-priority"> — {_e(priority)}</span>' if priority else "")
                             + "</div>",
                             unsafe_allow_html=True,
                         )
@@ -863,7 +875,7 @@ with col_panel:
                     unsafe_allow_html=True,
                 )
                 for lim in limitations:
-                    st.markdown(f'<div class="limit-item">{lim}</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="limit-item">{_e(lim)}</div>', unsafe_allow_html=True)
 
             # Systemic gaps (conflicts)
             conflicts = output.get("conflicts", [])
@@ -881,9 +893,9 @@ with col_panel:
                     desc    = c.get("description", "")
                     st.markdown(
                         f'<div class="gap-item">'
-                        f'<strong>{parties}</strong>'
-                        + (f' — {issue}' if issue else "")
-                        + f'<br><span style="font-weight:400;">{desc}</span>'
+                        f'<strong>{_e(parties)}</strong>'
+                        + (f' — {_e(issue)}' if issue else "")
+                        + f'<br><span style="font-weight:400;">{_e(desc)}</span>'
                         + "</div>",
                         unsafe_allow_html=True,
                     )
@@ -896,20 +908,20 @@ with col_panel:
             # ── Header row ──────────────────────────────────────────────────
             tier_cls = _tier_css(tier)
             st.markdown(
-                f'<span class="{tier_cls}">{tier}</span>&nbsp;'
+                f'<span class="{tier_cls}">{_e(tier)}</span>&nbsp;'
                 f'<span class="chip">{n_articles} article{"s" if n_articles != 1 else ""} total</span>',
                 unsafe_allow_html=True,
             )
             st.markdown(
                 f'<div style="font-size:0.74rem;color:#5A6A80;margin:0.25rem 0 0.75rem;">'
-                f'Initial query: <em>{evidence_meta.get("query","")}</em></div>',
+                f'Initial query: <em>{_e(evidence_meta.get("query",""))}</em></div>',
                 unsafe_allow_html=True,
             )
 
             def _render_article(a: dict, ref_num: int) -> None:
                 """Render one article card with clickable title and PubMed link."""
                 title   = a.get("title", "Untitled")
-                url     = a.get("url", "")
+                url     = _safe_url(a.get("url", ""))
                 journal = a.get("journal", "")
                 year    = a.get("year", "")
                 authors = a.get("authors", "")
@@ -918,8 +930,8 @@ with col_panel:
                     abstract += "…"
 
                 title_html = (
-                    f'<a href="{url}" target="_blank" rel="noopener">{title}</a>'
-                    if url else title
+                    f'<a href="{url}" target="_blank" rel="noopener">{_e(title)}</a>'
+                    if url else _e(title)
                 )
                 link_html = (
                     f'<a class="article-link" href="{url}" target="_blank" rel="noopener">'
@@ -929,10 +941,10 @@ with col_panel:
                 st.markdown(
                     f'<div class="article-card">'
                     f'<div class="article-title">[{ref_num}] {title_html}</div>'
-                    f'<div class="article-meta">{journal} &middot; {year}'
-                    + (f' &middot; {authors[:80]}{"…" if len(authors) > 80 else ""}' if authors else "")
+                    f'<div class="article-meta">{_e(journal)} &middot; {_e(year)}'
+                    + (f' &middot; {_e(authors[:80])}{"…" if len(authors) > 80 else ""}' if authors else "")
                     + f'</div>'
-                    f'<div class="article-abstract">{abstract}</div>'
+                    f'<div class="article-abstract">{_e(abstract)}</div>'
                     f'{link_html}'
                     f'</div>',
                     unsafe_allow_html=True,
@@ -956,11 +968,11 @@ with col_panel:
                     st.markdown(
                         f'<div class="pillar-card {css_cls}">'
                         f'<div class="pillar-header">'
-                        f'<span class="pillar-title">{display}</span>'
-                        f'&nbsp;<span class="{tier_cls_p}" style="font-size:0.7rem;">{p_tier}</span>'
+                        f'<span class="pillar-title">{_e(display)}</span>'
+                        f'&nbsp;<span class="{tier_cls_p}" style="font-size:0.7rem;">{_e(p_tier)}</span>'
                         f'&nbsp;<span class="chip">{len(p_arts)} article{"s" if len(p_arts) != 1 else ""}</span>'
                         f'</div>'
-                        f'<div class="pillar-query">Query: {pquery}</div>'
+                        f'<div class="pillar-query">Query: {_e(pquery)}</div>'
                         f'</div>',
                         unsafe_allow_html=True,
                     )
