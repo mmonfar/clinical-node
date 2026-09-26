@@ -3,3 +3,5 @@ openai==2.31.0
 biopython==1.87
 python-dotenv==1.2.2
 requests==2.33.1
+# mmonfar-brand is not on PyPI: pip install -e ../brand-identity[streamlit]
+mmonfar-brand

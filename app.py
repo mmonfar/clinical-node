@@ -13,15 +13,32 @@ from pathlib import Path
 
 import streamlit as st
 
+from mmonfar_brand import streamlit as mmst
+from mmonfar_brand import tokens as brand_tokens
+
 import clinical_engine
 import cron_refine
 import state_manager
 
 # ---------------------------------------------------------------------------
-# Page config
+# Palette — from the canonical mmonfar. tokens (brand-identity is the single
+# source of truth; see brand-identity/ADOPTION.md). This app's status
+# badges, evidence tiers, risk levels and card accents further down are
+# semantic states -- active/review/overdue, high/medium/low risk,
+# RCT/mid/case-report evidence -- not brand colours, since the identity
+# deliberately has only one accent, so they stay as local hex literals by
+# design (same pattern as staff_planner_app's AMBER/RED).
 # ---------------------------------------------------------------------------
 
-st.set_page_config(
+ACCENT = brand_tokens.TEAL          # replaces the old hand-rolled #002868 navy
+ACCENT_HOVER = brand_tokens.TEAL_BRIGHT  # replaces the old #003DA5 hover
+
+# ---------------------------------------------------------------------------
+# Page config + brand CSS
+# ---------------------------------------------------------------------------
+
+mmst.apply(
+    st,
     page_title="Clinical Intelligence Node",
     page_icon="⚕",
     layout="wide",
@@ -29,17 +46,13 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------------------------
-# CSS — all colors explicit; theme-independent
+# CSS — app-specific layout on top of the brand stylesheet; all colors
+# explicit, theme-independent. The accent below is templated from
+# ACCENT/ACCENT_HOVER; everything else is this app's own semantic palette.
 # ---------------------------------------------------------------------------
 
-st.markdown("""
+_CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-/* ── Global ───────────────────────────────────────────────────────────────── */
-html, body, [class*="css"], .stApp {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-}
 [data-testid="stAppViewContainer"] { background-color: #EEF1F6 !important; }
 [data-testid="stHeader"]           { background: transparent !important; }
 
@@ -260,7 +273,12 @@ html, body, [class*="css"], .stApp {
     text-align: center; color: #5A6A80; font-size: 0.88rem;
 }
 </style>
-""", unsafe_allow_html=True)
+"""
+# Swap the old hand-rolled navy/blue accent for the brand token, in place --
+# a plain .replace() rather than an f-string, since the CSS above is full of
+# literal braces (rule blocks) that an f-string would need to escape.
+_CSS = _CSS.replace("#002868", ACCENT).replace("#0057A8", ACCENT).replace("#003DA5", ACCENT_HOVER)
+st.markdown(_CSS, unsafe_allow_html=True)
 
 
 # ---------------------------------------------------------------------------
@@ -683,7 +701,7 @@ with col_panel:
         # Case header
         st.markdown(
             f'<div class="card card-blue" style="padding:0.75rem 1rem;margin-bottom:0.75rem;">'
-            f'<span style="font-weight:700;color:#002868;">{case_id}</span>'
+            f'<span style="font-weight:700;color:{ACCENT};">{case_id}</span>'
             f'&nbsp;&nbsp;{_status_badge_html(status_str)}'
             f'<span style="font-size:0.75rem;color:#5A6A80;float:right;">'
             f'{_e(output.get("timestamp","")[:10])}</span>'
@@ -714,7 +732,7 @@ with col_panel:
             # SBAR
             st.markdown(
                 '<div class="card card-blue">'
-                '<div style="font-weight:600;color:#002868;font-size:0.85rem;margin-bottom:0.5rem;">SBAR</div>'
+                f'<div style="font-weight:600;color:{ACCENT};font-size:0.85rem;margin-bottom:0.5rem;">SBAR</div>'
                 f'<div style="font-size:0.87rem;color:#1A2332;">'
                 f'<strong>S</strong>&nbsp;{_e(sbar.get("situation",""))}<br><br>'
                 f'<strong>B</strong>&nbsp;{_e(sbar.get("background",""))}<br><br>'
@@ -771,7 +789,7 @@ with col_panel:
             if final_rec:
                 st.markdown(
                     f'<div class="card card-blue">'
-                    f'<div style="font-size:0.75rem;font-weight:700;color:#0057A8;'
+                    f'<div style="font-size:0.75rem;font-weight:700;color:{ACCENT};'
                     f'text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.35rem;">MDT Final Recommendation</div>'
                     f'<div style="font-size:0.88rem;color:#1A2332;">{_e(final_rec)}</div>'
                     f'</div>',
@@ -827,7 +845,7 @@ with col_panel:
             roundtable = output.get("roundtable", [])
             if roundtable:
                 st.markdown(
-                    '<div style="font-size:0.72rem;font-weight:700;color:#002868;'
+                    f'<div style="font-size:0.72rem;font-weight:700;color:{ACCENT};'
                     'text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.5rem;">'
                     "Roundtable Transcript</div>",
                     unsafe_allow_html=True,
@@ -1024,7 +1042,7 @@ with col_panel:
             col_path, col_dl = st.columns([3, 1])
             with col_path:
                 st.markdown(
-                    f'<div style="font-size:0.78rem;font-weight:600;color:#002868;">'
+                    f'<div style="font-size:0.78rem;font-weight:600;color:{ACCENT};">'
                     f'minutes/{case_id}.md'
                     f'<span style="font-weight:400;color:#5A6A80;margin-left:0.6rem;">'
                     f'{len(blocks)} revision{"s" if len(blocks) != 1 else ""}'
@@ -1083,7 +1101,7 @@ with col_panel:
             # ── EPR Copy-Paste Buffer ────────────────────────────────────────
             st.divider()
             st.markdown(
-                '<div style="font-size:0.78rem;font-weight:600;color:#002868;margin-bottom:0.3rem;">'
+                f'<div style="font-size:0.78rem;font-weight:600;color:{ACCENT};margin-bottom:0.3rem;">'
                 "EPR Copy-Paste Buffer</div>",
                 unsafe_allow_html=True,
             )
