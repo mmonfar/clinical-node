@@ -11,18 +11,15 @@ Auditor          gpt-4o-mini  temp=0.0   Formal minutes with MDT & gap sections.
 """
 
 import json
-import os
 from datetime import datetime, timezone
 
 from dotenv import load_dotenv
-from openai import OpenAI
 
+from adapters.llm import complete
 import pubmed_client
 import state_manager
 
 load_dotenv()
-
-_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
 RARE_THRESHOLD = 3
 PUBMED_MAX_RESULTS = 5
@@ -140,7 +137,7 @@ def parse_sbar_from_text(text: str) -> dict:
 
     Returns dict: situation, background, assessment, recommendation.
     """
-    response = _client.chat.completions.create(
+    response = complete(
         model="gpt-4o-mini",
         temperature=0.0,
         response_format={"type": "json_object"},
@@ -176,7 +173,7 @@ def build_pubmed_query(sbar: dict) -> str:
         sbar.get("assessment", ""),
     ]))
 
-    response = _client.chat.completions.create(
+    response = complete(
         model="gpt-4o-mini",
         temperature=0.0,
         messages=[
@@ -215,7 +212,7 @@ def build_pillar_queries(sbar: dict, initial_query: str) -> dict:
         sbar.get("situation", ""),
         sbar.get("assessment", ""),
     ]))
-    response = _client.chat.completions.create(
+    response = complete(
         model="gpt-4o-mini",
         temperature=0.0,
         response_format={"type": "json_object"},
@@ -446,7 +443,7 @@ def researcher_synthesize(sbar: dict, evidence: dict) -> str:
         abstract_block   = _format_abstracts(evidence.get("articles", []))
         pillar_instruction = ""
 
-    response = _client.chat.completions.create(
+    response = complete(
         model="gpt-4o-mini",
         temperature=0.0,
         messages=[
@@ -506,7 +503,7 @@ def mdt_roundtable_review(
 
     specialty_catalogue = json.dumps(MDT_SPECIALTIES, indent=2)
 
-    response = _client.chat.completions.create(
+    response = complete(
         model="gpt-4o",
         temperature=0.25,
         response_format={"type": "json_object"},
@@ -639,7 +636,7 @@ def auditor_record(case_id: str, output: dict) -> str:
         if gap_banner else ""
     )
 
-    response = _client.chat.completions.create(
+    response = complete(
         model="gpt-4o-mini",
         temperature=0.0,
         messages=[

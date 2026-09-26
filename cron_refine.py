@@ -20,15 +20,12 @@ import sys
 from datetime import datetime, timezone
 
 from dotenv import load_dotenv
-from openai import OpenAI
-import os
 
+from adapters.llm import complete
 import pubmed_client
 import state_manager
 
 load_dotenv()
-
-_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
 LOOKBACK_HOURS = 72
 MIN_NEW_ARTICLES = 1  # minimum new articles needed to trigger GPT contradiction check
@@ -125,7 +122,7 @@ def _check_contradiction(minutes_text: str, new_articles: list) -> tuple[bool, s
     )
 
     try:
-        response = _client.chat.completions.create(
+        response = complete(
             model="gpt-4o",
             temperature=0.0,
             response_format={"type": "json_object"},
