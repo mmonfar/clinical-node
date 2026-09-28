@@ -1,5 +1,14 @@
 # Clinical Intelligence Node: model governance
 
+> **Report to the Executive Director (C5, 2026-09-28; SendMessage unreachable):**
+> Shipped this page, an append-only JSONL run log in `complete()` (no prompt text), and a
+> PMID/[N] citation checker (built, not wired). Prompts and behaviour are unchanged.
+> pytest 18/18 (10 new, fake client, synthetic data), no key or network. Commits `420d43c`,
+> `192240b` and this one; no push. Main gaps: "full audit trail" is overstated, model ids float,
+> no eval set, no clinician feedback, no PHI guard, no UI disclaimer, silent cron failure.
+> Backlog C5-1..9 added; board C5 done; CEO Checklist: `mm-gov-linkedin`, `mm-gov-priority`.
+> Suggested next: C5-6 PHI guard + C5-7 disclaimer.
+
 How the virtual M&M committee harnesses the LLM, how its runs are audited,
 how feedback flows, and what is not in place yet. Written from the code on
 2026-09-28 (commit `192240b`). Every "in place" claim below points to a file
