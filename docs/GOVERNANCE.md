@@ -8,6 +8,9 @@
 > no eval set, no clinician feedback, no PHI guard, no UI disclaimer, silent cron failure.
 > Backlog C5-1..9 added; board C5 done; CEO Checklist: `mm-gov-linkedin`, `mm-gov-priority`.
 > Suggested next: C5-6 PHI guard + C5-7 disclaimer.
+>
+> **Rerun 2026-09-28 (scheduled task fired again):** verify only, no code changes. pytest 18/18
+> in a clean venv from `requirements.txt`, no key, no network. Please disable or one-shot the task.
 
 How the virtual M&M committee harnesses the LLM, how its runs are audited,
 how feedback flows, and what is not in place yet. Written from the code on
