@@ -1117,3 +1117,10 @@ with col_panel:
                 st.success(
                     "Minutes ready. Select all text above (Ctrl+A / Cmd+A) and paste into your EPR system."
                 )
+
+st.caption(
+    "Research and demonstration software. Not a medical device and not intended for "
+    "clinical decision-making, diagnosis or treatment. Provided \"as is\", without warranty "
+    "of any kind; the author accepts no liability for any use. Uses synthetic data only. "
+    "Personal project · not affiliated with any employer · synthetic data only."
+)
