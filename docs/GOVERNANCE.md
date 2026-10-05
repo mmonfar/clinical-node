@@ -113,12 +113,10 @@ the model alias floats). The minutes' author line is a hard-coded label
 | Cost / latency | in place (measure) | logged per call; no budget or alert |
 | Failure visibility | partial | cron failure is silent (reads as "no contradiction") |
 
-**Sources.** The brain (`refs_books`) has **no** sources on LLM governance,
-evaluation, prompt injection, citation grounding or clinical AI audit
-(searched 2026-09-28: 12 queries, only unrelated forecasting/ML hits). This
-page rests on the code alone. Adding 2–3 references via `refs_books/_inbox`
-(e.g. a clinical-AI reporting guideline and an LLM-evaluation paper) is plan
-item C5-8.
+**Sources.** No published references on LLM governance, evaluation, prompt
+injection, citation grounding or clinical AI audit are cited yet; this page
+rests on the code alone. Adding 2–3 (e.g. a clinical-AI reporting guideline
+and an LLM-evaluation paper) is roadmap item R8.
 
 ## 6. Status table
 
@@ -133,37 +131,23 @@ item C5-8.
 | Model/PubMed text escaped before HTML render | `app._e`, `app._safe_url`; `tests/test_escaping.py` | in place |
 | Minutes are an append-only log | `state_manager.append_minutes` | in place (no test) |
 | Citations checked for PMID format and valid `[N]` | `adapters/citations.py`; `tests/test_citations.py` | partial: built, not wired |
-| Pinned model snapshots | — | planned (C5-1) |
-| Synthetic evaluation set scored on each change | — | planned (C5-3) |
-| Reviewer ratings/corrections stored and reviewed | — | planned (C5-4) |
-| Prompt-injection hardening | — | planned (C5-5) |
-| PHI guard before the API call | — | planned (C5-6) |
-| Disclaimer in UI and minutes | — | planned (C5-7) |
+| Pinned model snapshots | — | planned (R1) |
+| Synthetic evaluation set scored on each change | — | planned (R3) |
+| Reviewer ratings/corrections stored and reviewed | — | planned (R4) |
+| Prompt-injection hardening | — | planned (R5) |
+| PHI guard before the API call | — | planned (R6) |
+| Disclaimer in UI and minutes | — | planned (R7) |
 
-## 7. Plan (board backlog, division C)
+## 7. Roadmap
 
 | # | Item | Effort |
 |---|---|---|
-| C5-1 | Pin dated model snapshots + `seed`, set `max_tokens`; move prompts to `prompts/` with an id/version logged per call; add a run id linking calls → case | Low |
-| C5-2 | Wire `citations.py` into `build_output` + minutes (flag banner); Auditor must not re-write URLs (append the reference block in code) | Low |
-| C5-3 | Evaluation harness: 10–15 synthetic cases with expected findings (e.g. reversal agent named, CrCl requested, gap banner fires), fake-LLM unit tests + an opt-in live scored run; score logged per change | Med |
-| C5-4 | Reviewer feedback: per-case rating + free-text correction + sign-off in the UI, append-only `feedback.jsonl`, monthly review feeding prompt changes | Med |
-| C5-5 | Prompt-injection hardening: delimit abstracts/case text as data, schema-validate model JSON, test with a hostile synthetic abstract | Low |
-| C5-6 | PHI guard: regex/NER pre-check (names, dates, IDs, NHS/MRN-like numbers) blocking the API call + UI warning; tests on synthetic identifiers | Med |
-| C5-7 | "Not a medical device / not clinical advice / fictional data only" in UI and minutes header (with the licensing rollout backlog row) | Low |
-| C5-8 | Brain intake: 2–3 governance references via `refs_books/_inbox` | Low |
-| C5-9 | Make cron failures visible (status `check_failed`, not "no contradiction"); make `cases.json` history append-only | Low |
-
-## 8. Proposed LinkedIn wording (for the CEO; the post file is unchanged)
-
-The draft says the Auditor writes minutes "with a full audit trail". Today
-that overstates it. Suggested replacement sentences:
-
-> Every model call goes through one gateway that logs which model actually
-> answered, its settings, time taken and tokens used — without storing any
-> case text. References come straight from PubMed with real PMIDs, and the
-> minutes are kept as an append-only record.
->
-> What it doesn't do yet: score itself against a benchmark case set, or
-> capture a reviewing clinician's corrections. Those are next, and until
-> they exist this stays a prototype.
+| R1 | Pin dated model snapshots + `seed`, set `max_tokens`; move prompts to `prompts/` with an id/version logged per call; add a run id linking calls → case | Low |
+| R2 | Wire `citations.py` into `build_output` + minutes (flag banner); Auditor must not re-write URLs (append the reference block in code) | Low |
+| R3 | Evaluation harness: 10–15 synthetic cases with expected findings (e.g. reversal agent named, CrCl requested, gap banner fires), fake-LLM unit tests + an opt-in live scored run; score logged per change | Med |
+| R4 | Reviewer feedback: per-case rating + free-text correction + sign-off in the UI, append-only `feedback.jsonl`, monthly review feeding prompt changes | Med |
+| R5 | Prompt-injection hardening: delimit abstracts/case text as data, schema-validate model JSON, test with a hostile synthetic abstract | Low |
+| R6 | PHI guard: regex/NER pre-check (names, dates, IDs, NHS/MRN-like numbers) blocking the API call + UI warning; tests on synthetic identifiers | Med |
+| R7 | "Not a medical device / not clinical advice / fictional data only" in UI and minutes header (with the licensing rollout backlog row) | Low |
+| R8 | Add 2–3 published references on LLM governance to the literature base | Low |
+| R9 | Make cron failures visible (status `check_failed`, not "no contradiction"); make `cases.json` history append-only | Low |
