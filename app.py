@@ -350,7 +350,7 @@ def _specialty_avatar(specialty: str) -> str:
     if "pulmon" in s:                           return "🫁"
     if "endo" in s:                             return "🔬"
     if "gastro" in s:                           return "🫄"
-    if "emergency" in s or " ed" in s:          return "🚨"
+    if "emergency" in s or " ed" in s:          return "🚨"  # zero-trace: ok (emergency dept. match)
     if "radio" in s:                            return "📡"
     if "pathol" in s:                           return "🔬"
     if "palliat" in s:                          return "🕊️"
