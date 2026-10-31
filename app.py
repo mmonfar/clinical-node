@@ -42,7 +42,7 @@ mmst.apply(
     page_title="Clinical Intelligence Node",
     page_icon="⚕",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
 
 # ---------------------------------------------------------------------------
@@ -74,7 +74,7 @@ _CSS = """
     width: 100% !important;
     text-align: left !important;
     padding: 0.35rem 0.65rem !important;
-    font-size: 0.82rem !important;
+    font-size: 0.875rem !important;
     font-weight: 400 !important;
     transition: background 0.12s !important;
 }
@@ -96,7 +96,7 @@ _CSS = """
     margin-bottom: 1.25rem; display: flex; align-items: center; gap: 1rem;
 }
 .cin-header-title { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em; }
-.cin-header-sub   { font-size: 0.78rem; opacity: 0.75; margin-top: 0.15rem; }
+.cin-header-sub   { font-size: 0.875rem; opacity: 0.75; margin-top: 0.15rem; }
 
 /* ── Chat messages ────────────────────────────────────────────────────────── */
 .msg-user {
@@ -113,7 +113,7 @@ _CSS = """
     box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 .msg-role-label {
-    font-size: 0.68rem; font-weight: 600;
+    font-size: 0.875rem; font-weight: 600;
     letter-spacing: 0.06em; text-transform: uppercase;
     margin-bottom: 0.3rem; opacity: 0.6;
 }
@@ -133,7 +133,7 @@ _CSS = """
 .card-red   { border-left: 4px solid #C0392B; }
 
 /* ── Badges ───────────────────────────────────────────────────────────────── */
-.badge { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+.badge { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 0.875rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
 .badge-active  { background-color: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
 .badge-review  { background-color: #FFF3CD; color: #856404; border: 1px solid #FFEEBA; }
 .badge-open    { background-color: #D1E3F8; color: #004085; border: 1px solid #B8D4F1; }
@@ -141,28 +141,28 @@ _CSS = """
 
 /* ── Sidebar section labels ───────────────────────────────────────────────── */
 .sidebar-section {
-    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em;
-    text-transform: uppercase; color: rgba(255,255,255,0.45) !important;
+    font-size: 0.875rem; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(255,255,255,0.8) !important;
     margin: 0.8rem 0 0.3rem;
 }
 
 /* ── Refinement status ────────────────────────────────────────────────────── */
-.refine-box { border-radius: 5px; padding: 0.5rem 0.7rem; font-size: 0.76rem; line-height: 1.5; margin: 0.3rem 0 0.5rem; }
+.refine-box { border-radius: 5px; padding: 0.5rem 0.7rem; font-size: 0.875rem; line-height: 1.5; margin: 0.3rem 0 0.5rem; }
 .refine-ok      { background-color: rgba(30,132,73,0.18);  color: #A8DFBA !important; border: 1px solid rgba(30,132,73,0.35); }
 .refine-overdue { background-color: rgba(200,116,0,0.18);  color: #FFCF80 !important; border: 1px solid rgba(200,116,0,0.40); }
 .refine-never   { background-color: rgba(255,255,255,0.08); color: #B0BCCF !important; border: 1px solid rgba(255,255,255,0.15); }
 
 /* ── Evidence pills ───────────────────────────────────────────────────────── */
-.tier-rct  { background-color: #002868; color: #FFFFFF; padding: 2px 10px; border-radius: 10px; font-size: 0.75rem; font-weight: 600; }
-.tier-mid  { background-color: #5A6A80; color: #FFFFFF; padding: 2px 10px; border-radius: 10px; font-size: 0.75rem; font-weight: 600; }
-.tier-case { background-color: #C87400; color: #FFFFFF; padding: 2px 10px; border-radius: 10px; font-size: 0.75rem; font-weight: 600; }
-.chip      { background-color: #EBF0F8; color: #1A2332; border: 1px solid #C8D4E6; padding: 2px 9px; border-radius: 10px; font-size: 0.75rem; font-weight: 500; margin: 2px; display: inline-block; }
+.tier-rct  { background-color: #002868; color: #FFFFFF; padding: 2px 10px; border-radius: 10px; font-size: 0.875rem; font-weight: 600; }
+.tier-mid  { background-color: #5A6A80; color: #FFFFFF; padding: 2px 10px; border-radius: 10px; font-size: 0.875rem; font-weight: 600; }
+.tier-case { background-color: #C87400; color: #FFFFFF; padding: 2px 10px; border-radius: 10px; font-size: 0.875rem; font-weight: 600; }
+.chip      { background-color: #EBF0F8; color: #1A2332; border: 1px solid #C8D4E6; padding: 2px 9px; border-radius: 10px; font-size: 0.875rem; font-weight: 500; margin: 2px; display: inline-block; }
 
 /* ── List items ───────────────────────────────────────────────────────────── */
-.rec-item   { background-color: #F0F5FF; border-left: 3px solid #0057A8; color: #1A2332; padding: 0.45rem 0.75rem; border-radius: 0 5px 5px 0; margin-bottom: 0.35rem; font-size: 0.87rem; }
-.caveat-item{ background-color: #FFFBF0; border-left: 3px solid #C87400; color: #1A2332; padding: 0.45rem 0.75rem; border-radius: 0 5px 5px 0; margin-bottom: 0.35rem; font-size: 0.87rem; }
-.limit-item { background-color: #FFF8F8; border-left: 3px solid #C0392B; color: #1A2332; padding: 0.45rem 0.75rem; border-radius: 0 5px 5px 0; margin-bottom: 0.35rem; font-size: 0.87rem; }
-.gap-item   { background-color: #FFF0F0; border-left: 3px solid #8B0000; color: #1A2332; padding: 0.5rem 0.75rem; border-radius: 0 5px 5px 0; margin-bottom: 0.4rem; font-size: 0.87rem; }
+.rec-item   { background-color: #F0F5FF; border-left: 3px solid #0057A8; color: #1A2332; padding: 0.45rem 0.75rem; border-radius: 0 5px 5px 0; margin-bottom: 0.35rem; font-size: 0.875rem; }
+.caveat-item{ background-color: #FFFBF0; border-left: 3px solid #C87400; color: #1A2332; padding: 0.45rem 0.75rem; border-radius: 0 5px 5px 0; margin-bottom: 0.35rem; font-size: 0.875rem; }
+.limit-item { background-color: #FFF8F8; border-left: 3px solid #C0392B; color: #1A2332; padding: 0.45rem 0.75rem; border-radius: 0 5px 5px 0; margin-bottom: 0.35rem; font-size: 0.875rem; }
+.gap-item   { background-color: #FFF0F0; border-left: 3px solid #8B0000; color: #1A2332; padding: 0.5rem 0.75rem; border-radius: 0 5px 5px 0; margin-bottom: 0.4rem; font-size: 0.875rem; }
 
 /* ── Critical info gap banner ─────────────────────────────────────────────── */
 .critical-gap-banner {
@@ -178,8 +178,8 @@ _CSS = """
     display: flex; align-items: center; gap: 0.6rem;
     padding: 0.35rem 0; border-bottom: 1px solid #EEF1F6;
 }
-.risk-label { font-size: 0.84rem; color: #1A2332; flex: 1; }
-.risk-pill  { padding: 2px 12px; border-radius: 10px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; min-width: 62px; text-align: center; }
+.risk-label { font-size: 0.875rem; color: #1A2332; flex: 1; }
+.risk-pill  { padding: 2px 12px; border-radius: 10px; font-size: 0.875rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; min-width: 62px; text-align: center; }
 .risk-high   { background-color: #F8D7DA; color: #721C24; border: 1px solid #F5C6CB; }
 .risk-medium { background-color: #FFF3CD; color: #856404; border: 1px solid #FFEEBA; }
 .risk-low    { background-color: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
@@ -191,12 +191,12 @@ _CSS = """
     display: flex; align-items: center; gap: 0.5rem;
 }
 .hod-name     { font-weight: 700; color: #002868; font-size: 0.88rem; }
-.hod-priority { font-size: 0.75rem; color: #5A6A80; font-style: italic; }
-.hod-position { font-size: 0.75rem; font-weight: 600; color: #1E8449; }
+.hod-priority { font-size: 0.875rem; color: #5A6A80; font-style: italic; }
+.hod-position { font-size: 0.875rem; font-weight: 600; color: #1E8449; }
 
 /* ── Tabs ─────────────────────────────────────────────────────────────────── */
 .stTabs [data-baseweb="tab-list"] { background-color: #FFFFFF !important; border-radius: 7px 7px 0 0; padding: 5px 5px 0; border-bottom: 2px solid #D6DDE8; gap: 3px; }
-.stTabs [data-baseweb="tab"]      { background-color: transparent !important; color: #5A6A80 !important; border-radius: 5px 5px 0 0; font-size: 0.82rem; font-weight: 500; padding: 7px 16px; }
+.stTabs [data-baseweb="tab"]      { background-color: transparent !important; color: #5A6A80 !important; border-radius: 5px 5px 0 0; font-size: 0.875rem; font-weight: 500; padding: 7px 16px; }
 .stTabs [aria-selected="true"]    { background-color: #002868 !important; color: #FFFFFF !important; }
 .stTabs [data-baseweb="tab-panel"]{ background-color: #FFFFFF !important; border-radius: 0 0 7px 7px; padding: 1rem 1.25rem; border: 1px solid #D6DDE8; border-top: none; }
 
@@ -204,10 +204,10 @@ _CSS = """
 .audit-scroll {
     background-color: #F7F9FC; border: 1px solid #D6DDE8; border-radius: 6px;
     padding: 1rem; max-height: 420px; overflow-y: auto;
-    font-size: 0.82rem; line-height: 1.7; color: #1A2332; white-space: pre-wrap;
+    font-size: 0.875rem; line-height: 1.7; color: #1A2332; white-space: pre-wrap;
 }
 .audit-compare-header {
-    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+    font-size: 0.875rem; font-weight: 700; letter-spacing: 0.08em;
     text-transform: uppercase; color: #5A6A80;
     padding: 0.3rem 0.6rem; background: #EEF1F6;
     border-radius: 5px; margin-bottom: 0.4rem;
@@ -240,10 +240,10 @@ _CSS = """
     margin-bottom: 0.5rem;
 }
 .pillar-title   { font-weight: 700; font-size: 0.88rem; color: #1A2332; }
-.pillar-query   { font-size: 0.72rem; color: #5A6A80; font-style: italic; margin-bottom: 0.5rem; }
+.pillar-query   { font-size: 0.875rem; color: #5A6A80; font-style: italic; margin-bottom: 0.5rem; }
 .evidence-gap-note {
     background-color: #FFF8E1; border: 1px dashed #C87400; border-radius: 6px;
-    padding: 0.65rem 1rem; color: #7A4A00; font-size: 0.84rem;
+    padding: 0.65rem 1rem; color: #7A4A00; font-size: 0.875rem;
     font-style: italic; margin-top: 0.3rem;
 }
 .article-card {
@@ -252,12 +252,12 @@ _CSS = """
     transition: box-shadow 0.12s;
 }
 .article-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-.article-title { font-weight: 600; font-size: 0.87rem; color: #002868; line-height: 1.4; }
+.article-title { font-weight: 600; font-size: 0.875rem; color: #002868; line-height: 1.4; }
 .article-title a { color: #0057A8 !important; text-decoration: none; }
 .article-title a:hover { text-decoration: underline; }
-.article-meta  { font-size: 0.74rem; color: #5A6A80; margin: 0.25rem 0; }
-.article-abstract { font-size: 0.83rem; color: #3A4A60; line-height: 1.55; margin-top: 0.3rem; }
-.article-link { font-size: 0.78rem; font-weight: 600; color: #0057A8 !important;
+.article-meta  { font-size: 0.875rem; color: #5A6A80; margin: 0.25rem 0; }
+.article-abstract { font-size: 0.875rem; color: #3A4A60; line-height: 1.55; margin-top: 0.3rem; }
+.article-link { font-size: 0.875rem; font-weight: 600; color: #0057A8 !important;
     text-decoration: none; display: inline-block; margin-top: 0.35rem; }
 .article-link:hover { text-decoration: underline; }
 
@@ -418,7 +418,7 @@ with st.sidebar:
     st.markdown(
         '<div style="padding:0.4rem 0 0.2rem;font-size:1rem;font-weight:700;color:#FFFFFF;">'
         "⚕ Clinical Intelligence Node</div>"
-        '<div style="font-size:0.72rem;color:rgba(255,255,255,0.55);">360° MDT Committee Platform</div>',
+        '<div style="font-size:0.875rem;color:rgba(255,255,255,0.8);">360° MDT Committee Platform</div>',
         unsafe_allow_html=True,
     )
     st.divider()
@@ -429,7 +429,7 @@ with st.sidebar:
     cases = state_manager.load_cases()
     if not cases:
         st.markdown(
-            '<div style="font-size:0.78rem;color:rgba(255,255,255,0.45);padding:0.3rem 0;">No cases yet.</div>',
+            '<div style="font-size:0.875rem;color:rgba(255,255,255,0.8);padding:0.3rem 0;">No cases yet.</div>',
             unsafe_allow_html=True,
         )
     else:
@@ -462,7 +462,7 @@ with st.sidebar:
     st.divider()
     st.markdown('<div class="sidebar-section">Invite Specialists</div>', unsafe_allow_html=True)
     st.markdown(
-        '<div style="font-size:0.72rem;color:rgba(255,255,255,0.5);margin-bottom:0.3rem;">'
+        '<div style="font-size:0.875rem;color:rgba(255,255,255,0.8);margin-bottom:0.3rem;">'
         "Force into next roundtable:</div>",
         unsafe_allow_html=True,
     )
@@ -499,8 +499,8 @@ with st.sidebar:
         label = last_dt.strftime("%d %b %H:%M UTC")
         if hrs >= 72:
             st.markdown(
-                f'<div class="refine-box refine-overdue">⚠ Overdue ({hrs:.0f}h ago)<br>'
-                f'<span style="opacity:0.75;">Last: {label}</span></div>',
+                f'<div class="refine-box refine-overdue">⚠ Overdue: last run {hrs/24:.0f} days ago<br>'
+                f'<span style="opacity:0.9;">Next step: click "Run Refinement Now". Last: {label}</span></div>',
                 unsafe_allow_html=True,
             )
         else:
@@ -526,8 +526,8 @@ with st.sidebar:
 
 st.markdown(
     '<div class="cin-header"><div>'
-    '<div class="cin-header-title">Clinical Intelligence Node</div>'
-    '<div class="cin-header-sub">360° Virtual MDT · Evidence-Based Clinical Review · JCI-Grade Audit</div>'
+    '<div class="cin-header-title">Clinical Intelligence Node <span style="font-size:0.875rem;font-weight:500;opacity:0.85;">by mmonfar</span></div>'
+    '<div class="cin-header-sub">360° Virtual MDT · Evidence-based case review · Audit trail (append-only minutes)</div>'
     '</div></div>',
     unsafe_allow_html=True,
 )
@@ -542,7 +542,7 @@ col_chat, col_panel = st.columns([5, 4], gap="medium")
 
 with col_chat:
     st.markdown(
-        '<div style="font-size:0.7rem;font-weight:700;letter-spacing:0.1em;'
+        '<div style="font-size:0.875rem;font-weight:700;letter-spacing:0.1em;'
         'text-transform:uppercase;color:#5A6A80;margin-bottom:0.5rem;">Case Consultation</div>',
         unsafe_allow_html=True,
     )
@@ -574,9 +574,10 @@ with col_chat:
     if not st.session_state.messages:
         st.markdown(
             '<div class="empty-state">'
-            "<strong>Describe a clinical case below.</strong><br>"
-            "Free text or SBAR format accepted.<br>"
-            "<span style='font-size:0.8rem;'>The MDT will search PubMed, debate the case, "
+            "<strong>Step 1: type a synthetic case in the box below, then press Enter.</strong><br>"
+            "Free text or SBAR format accepted. The right panel will show the evidence, "
+            "the committee minutes and the gaps.<br>"
+            "<span style='font-size:0.875rem;'>The MDT will search PubMed, debate the case, "
             "and identify systemic gaps.</span>"
             "</div>",
             unsafe_allow_html=True,
@@ -598,7 +599,7 @@ with col_chat:
 
 with col_panel:
     st.markdown(
-        '<div style="font-size:0.7rem;font-weight:700;letter-spacing:0.1em;'
+        '<div style="font-size:0.875rem;font-weight:700;letter-spacing:0.1em;'
         'text-transform:uppercase;color:#5A6A80;margin-bottom:0.5rem;">Analysis &amp; Evidence</div>',
         unsafe_allow_html=True,
     )
@@ -703,7 +704,7 @@ with col_panel:
             f'<div class="card card-blue" style="padding:0.75rem 1rem;margin-bottom:0.75rem;">'
             f'<span style="font-weight:700;color:{ACCENT};">{case_id}</span>'
             f'&nbsp;&nbsp;{_status_badge_html(status_str)}'
-            f'<span style="font-size:0.75rem;color:#5A6A80;float:right;">'
+            f'<span style="font-size:0.875rem;color:#5A6A80;float:right;">'
             f'{_e(output.get("timestamp","")[:10])}</span>'
             f'</div>',
             unsafe_allow_html=True,
@@ -732,8 +733,8 @@ with col_panel:
             # SBAR
             st.markdown(
                 '<div class="card card-blue">'
-                f'<div style="font-weight:600;color:{ACCENT};font-size:0.85rem;margin-bottom:0.5rem;">SBAR</div>'
-                f'<div style="font-size:0.87rem;color:#1A2332;">'
+                f'<div style="font-weight:600;color:{ACCENT};font-size:0.875rem;margin-bottom:0.5rem;">SBAR</div>'
+                f'<div style="font-size:0.875rem;color:#1A2332;">'
                 f'<strong>S</strong>&nbsp;{_e(sbar.get("situation",""))}<br><br>'
                 f'<strong>B</strong>&nbsp;{_e(sbar.get("background",""))}<br><br>'
                 f'<strong>A</strong>&nbsp;{_e(sbar.get("assessment",""))}<br><br>'
@@ -756,7 +757,7 @@ with col_panel:
             risk_heatmap = output.get("risk_heatmap", {})
             if risk_heatmap:
                 st.markdown(
-                    '<div style="font-weight:600;color:#1A2332;font-size:0.82rem;'
+                    '<div style="font-weight:600;color:#1A2332;font-size:0.875rem;'
                     'text-transform:uppercase;letter-spacing:0.05em;margin:0.75rem 0 0.3rem;">Risk Assessment</div>',
                     unsafe_allow_html=True,
                 )
@@ -777,7 +778,7 @@ with col_panel:
             if rationale:
                 st.markdown(
                     f'<div class="card card-green">'
-                    f'<div style="font-size:0.75rem;font-weight:700;color:#1E8449;'
+                    f'<div style="font-size:0.875rem;font-weight:700;color:#1E8449;'
                     f'text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.35rem;">Rationale</div>'
                     f'<div style="font-size:0.88rem;color:#1A2332;">{_e(rationale)}</div>'
                     f'</div>',
@@ -789,7 +790,7 @@ with col_panel:
             if final_rec:
                 st.markdown(
                     f'<div class="card card-blue">'
-                    f'<div style="font-size:0.75rem;font-weight:700;color:{ACCENT};'
+                    f'<div style="font-size:0.875rem;font-weight:700;color:{ACCENT};'
                     f'text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.35rem;">MDT Final Recommendation</div>'
                     f'<div style="font-size:0.88rem;color:#1A2332;">{_e(final_rec)}</div>'
                     f'</div>',
@@ -800,7 +801,7 @@ with col_panel:
             recs = output.get("recommendations", [])
             if recs:
                 st.markdown(
-                    '<div style="font-weight:600;color:#1A2332;font-size:0.82rem;'
+                    '<div style="font-weight:600;color:#1A2332;font-size:0.875rem;'
                     'text-transform:uppercase;letter-spacing:0.05em;margin:0.5rem 0 0.3rem;">Action Recommendations</div>',
                     unsafe_allow_html=True,
                 )
@@ -811,7 +812,7 @@ with col_panel:
             caveats = output.get("caveats", [])
             if caveats:
                 st.markdown(
-                    '<div style="font-weight:600;color:#1A2332;font-size:0.82rem;'
+                    '<div style="font-weight:600;color:#1A2332;font-size:0.875rem;'
                     'text-transform:uppercase;letter-spacing:0.05em;margin:0.5rem 0 0.3rem;">Caveats</div>',
                     unsafe_allow_html=True,
                 )
@@ -837,7 +838,7 @@ with col_panel:
                     for s in specs
                 )
                 st.markdown(
-                    f'<div style="margin-bottom:0.75rem;"><strong style="font-size:0.8rem;color:#5A6A80;">MDT Panel:</strong> {chips}</div>',
+                    f'<div style="margin-bottom:0.75rem;"><strong style="font-size:0.875rem;color:#5A6A80;">MDT Panel:</strong> {chips}</div>',
                     unsafe_allow_html=True,
                 )
 
@@ -845,7 +846,7 @@ with col_panel:
             roundtable = output.get("roundtable", [])
             if roundtable:
                 st.markdown(
-                    f'<div style="font-size:0.72rem;font-weight:700;color:{ACCENT};'
+                    f'<div style="font-size:0.875rem;font-weight:700;color:{ACCENT};'
                     'text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.5rem;">'
                     "Roundtable Transcript</div>",
                     unsafe_allow_html=True,
@@ -888,7 +889,7 @@ with col_panel:
             limitations = output.get("limitations", [])
             if limitations:
                 st.markdown(
-                    '<div style="font-weight:600;color:#1A2332;font-size:0.82rem;'
+                    '<div style="font-weight:600;color:#1A2332;font-size:0.875rem;'
                     'text-transform:uppercase;letter-spacing:0.05em;margin:0.75rem 0 0.3rem;">Evidence Limitations</div>',
                     unsafe_allow_html=True,
                 )
@@ -900,7 +901,7 @@ with col_panel:
             if conflicts:
                 st.divider()
                 st.markdown(
-                    '<div style="font-weight:700;color:#8B0000;font-size:0.85rem;'
+                    '<div style="font-weight:700;color:#8B0000;font-size:0.875rem;'
                     'text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.4rem;">'
                     "⚡ Systemic Gaps Identified</div>",
                     unsafe_allow_html=True,
@@ -931,7 +932,7 @@ with col_panel:
                 unsafe_allow_html=True,
             )
             st.markdown(
-                f'<div style="font-size:0.74rem;color:#5A6A80;margin:0.25rem 0 0.75rem;">'
+                f'<div style="font-size:0.875rem;color:#5A6A80;margin:0.25rem 0 0.75rem;">'
                 f'Initial query: <em>{_e(evidence_meta.get("query",""))}</em></div>',
                 unsafe_allow_html=True,
             )
@@ -987,7 +988,7 @@ with col_panel:
                         f'<div class="pillar-card {css_cls}">'
                         f'<div class="pillar-header">'
                         f'<span class="pillar-title">{_e(display)}</span>'
-                        f'&nbsp;<span class="{tier_cls_p}" style="font-size:0.7rem;">{_e(p_tier)}</span>'
+                        f'&nbsp;<span class="{tier_cls_p}" style="font-size:0.875rem;">{_e(p_tier)}</span>'
                         f'&nbsp;<span class="chip">{len(p_arts)} article{"s" if len(p_arts) != 1 else ""}</span>'
                         f'</div>'
                         f'<div class="pillar-query">Query: {_e(pquery)}</div>'
@@ -1042,7 +1043,7 @@ with col_panel:
             col_path, col_dl = st.columns([3, 1])
             with col_path:
                 st.markdown(
-                    f'<div style="font-size:0.78rem;font-weight:600;color:{ACCENT};">'
+                    f'<div style="font-size:0.875rem;font-weight:600;color:{ACCENT};">'
                     f'minutes/{case_id}.md'
                     f'<span style="font-weight:400;color:#5A6A80;margin-left:0.6rem;">'
                     f'{len(blocks)} revision{"s" if len(blocks) != 1 else ""}'
@@ -1081,7 +1082,7 @@ with col_panel:
                 if len(blocks) > 1:
                     st.divider()
                     st.markdown(
-                        '<div style="font-size:0.72rem;font-weight:700;color:#5A6A80;'
+                        '<div style="font-size:0.875rem;font-weight:700;color:#5A6A80;'
                         'text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem;">'
                         f'Previous Revisions ({len(blocks) - 1})</div>',
                         unsafe_allow_html=True,
@@ -1101,7 +1102,7 @@ with col_panel:
             # ── EPR Copy-Paste Buffer ────────────────────────────────────────
             st.divider()
             st.markdown(
-                f'<div style="font-size:0.78rem;font-weight:600;color:{ACCENT};margin-bottom:0.3rem;">'
+                f'<div style="font-size:0.875rem;font-weight:600;color:{ACCENT};margin-bottom:0.3rem;">'
                 "EPR Copy-Paste Buffer</div>",
                 unsafe_allow_html=True,
             )
@@ -1119,8 +1120,7 @@ with col_panel:
                 )
 
 st.caption(
-    "Research and demonstration software. Not a medical device and not intended for "
-    "clinical decision-making, diagnosis or treatment. Provided \"as is\", without warranty "
-    "of any kind; the author accepts no liability for any use. Uses synthetic data only. "
-    "Personal project · not affiliated with any employer · synthetic data only."
+    "Demonstration software. Not a medical device; not for clinical decisions. "
+    "Synthetic data only. Provided \"as is\", without warranty. "
+    "Personal project, not affiliated with any employer."
 )
