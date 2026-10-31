@@ -1,7 +1,7 @@
 # Clinical Intelligence Node
 
 A multi-agent virtual M&M (Morbidity & Mortality) Committee platform.
-Analyses clinical cases against tiered medical evidence. Produces structured MDT minutes with full audit trails.
+Analyses clinical cases against tiered medical evidence. Produces structured MDT minutes, saved by appending (earlier minutes are not overwritten).
 
 ---
 
@@ -24,7 +24,7 @@ Three LLM agents collaborate on each case:
 |---|---|---|---|
 | Researcher | gpt-4o-mini | 0.0 | PubMed multi-pillar evidence search + synthesis |
 | MDT Roundtable | gpt-4o | 0.25 | 360° specialist debate, gap-finding, risk heatmap |
-| Auditor | gpt-4o-mini | 0.0 | Formal Markdown M&M minutes + audit trail |
+| Auditor | gpt-4o-mini | 0.0 | Formal Markdown M&M minutes |
 
 ### Evidence Ladder
 
@@ -49,7 +49,7 @@ When an initial query returns fewer than 2 results the Researcher automatically 
 - Risk Heatmap (High / Medium / Low per clinical risk)
 - Critical Information Gap banner
 - Evidence Matrix tab with clickable PubMed links
-- Formal M&M minutes with versioned audit trail
+- Formal M&M minutes, appended per session (no model-version log yet; see docs/GOVERNANCE.md)
 - 72-hour automated refinement cycle with contradiction detection
 - EPR copy-paste buffer + Markdown download
 

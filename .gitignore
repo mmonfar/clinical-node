@@ -55,3 +55,5 @@ video/out/
 *.mp4
 *.mov
 **/.claude/
+# Local marketing drafts are not tracked.
+marketing/
