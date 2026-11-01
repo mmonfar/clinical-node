@@ -3,6 +3,12 @@
 A multi-agent virtual M&M (Morbidity & Mortality) Committee platform.
 Analyses clinical cases against tiered medical evidence. Produces structured MDT minutes, saved by appending (earlier minutes are not overwritten).
 
+![Clinical Intelligence Node with the case registry, case entry box and evidence panel, desktop view](docs/screenshots/readme_desktop.png)
+
+On a phone: <img src="docs/screenshots/readme_phone.png" alt="Same screen on a phone, 390 pixels wide" width="195">
+
+*Screenshot with synthetic data.*
+
 ---
 
 ## ⚠️ Disclaimer
