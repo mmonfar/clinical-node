@@ -24,6 +24,8 @@ Always involve appropriate clinical specialists before acting on any output.
 
 ## Architecture
 
+This repo has two separate parts. The **Streamlit app** in the table below uses cloud models through the OpenAI API, so it needs an API key. The **debate engine** (`debate/`, see [below](#debate-engine-research-software)) uses local models only, through Ollama. The app does not call the debate engine yet.
+
 Three LLM agents collaborate on each case:
 
 | Agent | Model | Temp | Role |
