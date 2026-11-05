@@ -4,32 +4,27 @@
   "agents": {
    "sbar": {
     "valid": true,
-    "seconds": 37.0,
+    "seconds": 44.7,
     "problem": ""
    },
    "researcher": {
-    "valid": false,
-    "seconds": 48.1,
-    "problem": "HTTPError: HTTP Error 500: Internal Server Error"
-   },
-   "researcher_synthesis_only": {
     "valid": true,
-    "seconds": 38.0,
-    "problem": "empty or very short"
+    "seconds": 122.9,
+    "problem": ""
    },
    "mdt": {
     "valid": true,
-    "seconds": 466.3,
-    "problem": "cites reference numbers although no references exist (offline)"
+    "seconds": 445.5,
+    "problem": ""
    },
    "auditor": {
     "valid": true,
-    "seconds": 376.4,
+    "seconds": 322.2,
     "problem": ""
    },
    "refine72h": {
     "valid": true,
-    "seconds": 120.6,
+    "seconds": 177.5,
     "problem": ""
    }
   },
@@ -40,11 +35,94 @@
    "Radiology / Interventional Radiology",
    "Clinical Pharmacy"
   ],
-  "mdt_final": "The committee recommends immediate admission for observation due to borderline oxygen saturation (93%) and respiratory rate (24). Initiate empiric antibiotic therapy for community-acquired pneumonia while awaiting microbiological results. Calculate CrCl immediately to ensure safe dosing. A repeat CX",
-  "case_seconds": 1086.5
+  "mdt_final": "Admit the patient for observation and initiate empiric antibiotic therapy (Ceftriaxone + Azithromycin) pending renal function assessment (CrCl). Monitor respiratory status closely and perform a CURB-65 assessment to guide the level of care. Follow-up imaging is required in 4-6 weeks.",
+  "case_seconds": 1113.1
  },
  {
   "case": "c02_cystitis_easy",
+  "agents": {},
+  "error": "timeout after 1500s",
+  "case_seconds": 1500.1
+ },
+ {
+  "case": "c03_dka_easy",
+  "agents": {
+   "sbar": {
+    "valid": true,
+    "seconds": 49.9,
+    "problem": ""
+   },
+   "researcher": {
+    "valid": true,
+    "seconds": 78.2,
+    "problem": ""
+   },
+   "mdt": {
+    "valid": true,
+    "seconds": 664.9,
+    "problem": ""
+   },
+   "auditor": {
+    "valid": true,
+    "seconds": 392.1,
+    "problem": ""
+   },
+   "refine72h": {
+    "valid": true,
+    "seconds": 93.5,
+    "problem": ""
+   }
+  },
+  "mdt_specialists": [
+   "Endocrinology",
+   "ICU / Intensivist",
+   "Emergency Medicine",
+   "Nephrology / Renal Transplant",
+   "Clinical Pharmacy"
+  ],
+  "mdt_final": "Prioritize aggressive fluid resuscitation and potassium monitoring. Do not initiate insulin until potassium is confirmed >3.3 mmol/L. Simultaneously, perform an abdominal evaluation to rule out a surgical emergency as the underlying cause of the patient's pain and vomiting.",
+  "case_seconds": 1279.4
+ },
+ {
+  "case": "c04_hf_vs_copd",
+  "agents": {
+   "sbar": {
+    "valid": true,
+    "seconds": 72.2,
+    "problem": ""
+   },
+   "researcher": {
+    "valid": true,
+    "seconds": 89.8,
+    "problem": ""
+   },
+   "mdt": {
+    "valid": true,
+    "seconds": 490.6,
+    "problem": ""
+   },
+   "auditor": {
+    "valid": true,
+    "seconds": 457.0,
+    "problem": ""
+   },
+   "refine72h": {
+    "valid": true,
+    "seconds": 200.9,
+    "problem": ""
+   }
+  },
+  "mdt_specialists": [
+   "Cardiology",
+   "Pulmonology",
+   "ICU / Intensivist",
+   "Clinical Pharmacy"
+  ],
+  "mdt_final": "Admit the patient for management of acute decompensated heart failure with concurrent COPD monitoring. Immediate priorities are: 1) Obtain Echocardiogram and CrCl/Electrolytes; 2) Initiate IV diuresis with close renal monitoring; 3) Provide supportive respiratory therapy for COPD. Adjust all medicat",
+  "case_seconds": 1311.0
+ },
+ {
+  "case": "c05_dvt_ambiguous",
   "agents": {
    "sbar": {
     "valid": true,
@@ -52,179 +130,348 @@
     "problem": ""
    },
    "researcher": {
-    "valid": false,
-    "seconds": 56.7,
-    "problem": "HTTPError: HTTP Error 500: Internal Server Error"
-   },
-   "researcher_synthesis_only": {
     "valid": true,
-    "seconds": 63.5,
-    "problem": "empty or very short"
+    "seconds": 196.8,
+    "problem": ""
    },
    "mdt": {
     "valid": true,
-    "seconds": 371.3,
-    "problem": "cites reference numbers although no references exist (offline)"
+    "seconds": 562.1,
+    "problem": ""
    },
    "auditor": {
     "valid": true,
-    "seconds": 301.9,
+    "seconds": 375.6,
     "problem": ""
    },
    "refine72h": {
     "valid": true,
-    "seconds": 171.8,
+    "seconds": 146.2,
     "problem": ""
    }
   },
   "mdt_specialists": [
-   "Urology",
-   "Infectious Disease",
+   "Vascular Surgery",
+   "Cardiology",
    "Clinical Pharmacy",
-   "General / Trauma Surgery"
+   "Radiology / Interventional Radiology",
+   "Emergency Medicine"
   ],
-  "mdt_final": "The committee recommends outpatient management for uncomplicated cystitis. Order a urine culture, pregnancy test, and serum creatinine. Initiate Nitrofurantoin 100mg BID for 5 days, provided CrCl is >30 mL/min. Provide clear 'red flag' instructions (fever, flank pain) for immediate return to the ER.",
-  "case_seconds": 1013.6
+  "mdt_final": "The committee recommends immediate venous duplex ultrasound to confirm DVT. Simultaneously, obtain a CBC, CMP, and coagulation profile to calculate the Cockcroft-Gault CrCl. Once confirmed and renal function is assessed, initiate anticoagulation with a DOAC, adjusted for the patient's renal clearanc",
+  "case_seconds": 1329.0
  },
  {
-  "case": "c03_dka_easy",
+  "case": "c06_appendix_missing_fact",
+  "agents": {},
+  "error": "timeout after 1500s",
+  "case_seconds": 1500.0
+ },
+ {
+  "case": "c07_sah_anchor",
   "agents": {
    "sbar": {
     "valid": true,
-    "seconds": 53.8,
+    "seconds": 40.2,
     "problem": ""
    },
    "researcher": {
     "valid": true,
-    "seconds": 80.2,
-    "problem": ""
-   },
-   "mdt": {
-    "valid": false,
-    "seconds": 460.1,
-    "problem": "JSONDecodeError: Expecting value: line 51 column 9 (char 2298)"
-   }
-  },
-  "case_seconds": 594.7
- },
- {
-  "case": "c04_hf_vs_copd",
-  "agents": {
-   "sbar": {
-    "valid": true,
-    "seconds": 61.7,
-    "problem": ""
-   },
-   "researcher": {
-    "valid": true,
-    "seconds": 77.3,
+    "seconds": 83.6,
     "problem": ""
    },
    "mdt": {
     "valid": true,
-    "seconds": 409.2,
+    "seconds": 525.6,
     "problem": ""
    },
    "auditor": {
     "valid": true,
-    "seconds": 290.2,
+    "seconds": 310.9,
     "problem": ""
    },
    "refine72h": {
     "valid": true,
-    "seconds": 160.2,
+    "seconds": 142.5,
+    "problem": ""
+   }
+  },
+  "mdt_specialists": [
+   "Neurology",
+   "Radiology / Interventional Radiology",
+   "Neurosurgery",
+   "ICU / Intensivist"
+  ],
+  "mdt_final": "The committee recommends immediate non-contrast CT imaging to rule out subarachnoid hemorrhage. If SAH is confirmed, the patient should be admitted to the ICU for strict blood pressure control and monitored for complications like vasospasm. A CTA/MRA should be performed to identify the source, and N",
+  "case_seconds": 1105.8
+ },
+ {
+  "case": "c08_pe_with_bleed",
+  "agents": {
+   "sbar": {
+    "valid": true,
+    "seconds": 49.6,
+    "problem": ""
+   },
+   "researcher": {
+    "valid": true,
+    "seconds": 147.9,
+    "problem": ""
+   },
+   "mdt": {
+    "valid": true,
+    "seconds": 384.4,
+    "problem": ""
+   },
+   "auditor": {
+    "valid": true,
+    "seconds": 311.8,
+    "problem": ""
+   },
+   "refine72h": {
+    "valid": true,
+    "seconds": 99.7,
+    "problem": ""
+   }
+  },
+  "mdt_specialists": [
+   "Pulmonology",
+   "Gastroenterology",
+   "Hematology",
+   "ICU / Intensivist",
+   "Radiology / Interventional Radiology"
+  ],
+  "mdt_final": "Stabilize the patient in the ICU. Perform an urgent endoscopy to identify and control the gastrointestinal bleed. Avoid systemic thrombolytics. If the patient remains hemodynamically unstable due to the pulmonary embolism, proceed with catheter-directed therapy or mechanical embolectomy, as these of",
+  "case_seconds": 994.8
+ },
+ {
+  "case": "c09_htn_asthma",
+  "agents": {
+   "sbar": {
+    "valid": true,
+    "seconds": 45.4,
+    "problem": ""
+   },
+   "researcher": {
+    "valid": true,
+    "seconds": 119.6,
+    "problem": ""
+   },
+   "mdt": {
+    "valid": true,
+    "seconds": 446.8,
+    "problem": ""
+   },
+   "auditor": {
+    "valid": true,
+    "seconds": 260.6,
+    "problem": ""
+   },
+   "refine72h": {
+    "valid": true,
+    "seconds": 185.1,
     "problem": ""
    }
   },
   "mdt_specialists": [
    "Cardiology",
    "Pulmonology",
-   "ICU / Intensivist",
-   "Clinical Pharmacy"
+   "Clinical Pharmacy",
+   "Internal Medicine"
   ],
-  "mdt_final": "The committee recommends immediate admission for management of acute decompensated heart failure. Initiate IV diuresis while strictly monitoring renal function (CrCl) and electrolytes. Coordinate with Pulmonology to ensure COPD stability. An urgent echocardiogram is mandatory to guide long-term mana",
-  "case_seconds": 999.7
+  "mdt_final": "The committee recommends initiating an ACE inhibitor as the primary antihypertensive agent. This choice avoids the bronchoconstriction risks associated with beta-blockers while addressing the patient's hypertension. The patient should be educated on the potential for a dry cough as a side effect of ",
+  "case_seconds": 1058.5
  },
  {
-  "case": "c05_dvt_ambiguous",
+  "case": "c10_cap_penicillin",
   "agents": {
    "sbar": {
     "valid": true,
-    "seconds": 40.0,
+    "seconds": 41.5,
     "problem": ""
    },
    "researcher": {
-    "valid": false,
-    "seconds": 48.6,
-    "problem": "HTTPError: HTTP Error 500: Internal Server Error"
-   },
-   "researcher_synthesis_only": {
     "valid": true,
-    "seconds": 43.1,
+    "seconds": 120.5,
     "problem": ""
    },
    "mdt": {
     "valid": true,
-    "seconds": 411.1,
-    "problem": "cites reference numbers although no references exist (offline)"
+    "seconds": 382.1,
+    "problem": ""
    },
    "auditor": {
     "valid": true,
-    "seconds": 418.0,
+    "seconds": 296.0,
     "problem": ""
    },
    "refine72h": {
     "valid": true,
-    "seconds": 172.0,
+    "seconds": 613.6,
+    "problem": ""
+   }
+  },
+  "mdt_specialists": [
+   "Pulmonology",
+   "Infectious Disease",
+   "Emergency Medicine",
+   "Clinical Pharmacy",
+   "Radiology"
+  ],
+  "mdt_final": "Initiate empiric antibiotic therapy with a respiratory fluoroquinolone (e.g., Levofloxacin) or a macrolide (e.g., Azithromycin) after confirming renal function. Avoid all beta-lactams due to the patient's history of anaphylaxis. Monitor for clinical improvement and schedule a follow-up chest X-ray i",
+  "case_seconds": 1454.2
+ },
+ {
+  "case": "c11_acs_epigastric",
+  "agents": {
+   "sbar": {
+    "valid": true,
+    "seconds": 51.9,
+    "problem": ""
+   },
+   "researcher": {
+    "valid": true,
+    "seconds": 115.2,
+    "problem": ""
+   },
+   "mdt": {
+    "valid": true,
+    "seconds": 365.7,
+    "problem": ""
+   },
+   "auditor": {
+    "valid": true,
+    "seconds": 326.0,
+    "problem": ""
+   },
+   "refine72h": {
+    "valid": true,
+    "seconds": 104.1,
     "problem": ""
    }
   },
   "mdt_specialists": [
    "Cardiology",
-   "Vascular Surgery",
-   "Clinical Pharmacy",
+   "Emergency Medicine",
+   "ICU / Intensivist",
    "Radiology / Interventional Radiology",
-   "Internal Medicine"
+   "Clinical Pharmacy"
   ],
-  "mdt_final": "Confirm DVT via urgent Doppler ultrasound. Simultaneously calculate Cockcroft-Gault CrCl. If CrCl >30 mL/min, initiate DOAC therapy. If CrCl <30 mL/min, consider LMWH with renal adjustment. Monitor for signs of pulmonary embolism.",
-  "case_seconds": 1133.5
+  "mdt_final": "The committee recommends an immediate 'Code STEMI' style workup: perform a 12-lead ECG and Troponin assay within 10 minutes. If ECG shows ST-elevation, proceed to the catheterization lab immediately. If NSTEMI/Unstable Angina is suspected, initiate standard antiplatelet and anticoagulant therapy whi",
+  "case_seconds": 963.3
  },
  {
-  "case": "c06_appendix_missing_fact",
+  "case": "c12_thyroid_anxiety",
   "agents": {
    "sbar": {
     "valid": true,
-    "seconds": 58.7,
+    "seconds": 38.9,
     "problem": ""
    },
    "researcher": {
     "valid": true,
-    "seconds": 96.2,
+    "seconds": 103.3,
     "problem": ""
    },
    "mdt": {
     "valid": true,
-    "seconds": 344.1,
+    "seconds": 311.3,
     "problem": ""
    },
    "auditor": {
     "valid": true,
-    "seconds": 284.5,
+    "seconds": 253.0,
     "problem": ""
    },
    "refine72h": {
-    "valid": false,
-    "seconds": 496.6,
-    "problem": "RuntimeError: model call or JSON failed (swallowed by the check):   GPT contradiction check failed: Expecting value: line 1 column 1 (char 0)\n"
+    "valid": true,
+    "seconds": 111.5,
+    "problem": ""
    }
   },
   "mdt_specialists": [
-   "General / Trauma Surgery",
-   "OB-GYN",
+   "Endocrinology",
+   "Cardiology",
    "Radiology / Interventional Radiology",
-   "Emergency Medicine"
+   "Clinical Pharmacy"
   ],
-  "mdt_final": "The committee recommends an immediate 'dual-track' diagnostic approach: 1) Obtain a serum $\beta$-hCG and perform a pelvic ultrasound to rule out ectopic pregnancy. 2) Simultaneously prepare for a surgical consultation for suspected acute appendicitis. Surgical intervention should only proceed once e",
-  "case_seconds": 1281.0
+  "mdt_final": "The committee recommends a dual-track approach: immediate symptomatic relief via beta-blockade and initiation of antithyroid medication (Methimazole), followed by a comprehensive diagnostic workup including thyroid ultrasound, TRAb titers, and cardiac screening (EKG/Echo) to determine the definitive",
+  "case_seconds": 818.7
+ },
+ {
+  "case": "c13_ace_pregnancy",
+  "agents": {
+   "sbar": {
+    "valid": true,
+    "seconds": 36.8,
+    "problem": ""
+   },
+   "researcher": {
+    "valid": true,
+    "seconds": 100.8,
+    "problem": ""
+   },
+   "mdt": {
+    "valid": true,
+    "seconds": 293.1,
+    "problem": ""
+   },
+   "auditor": {
+    "valid": true,
+    "seconds": 237.9,
+    "problem": ""
+   },
+   "refine72h": {
+    "valid": true,
+    "seconds": 90.1,
+    "problem": ""
+   }
+  },
+  "mdt_specialists": [
+   "OB-GYN",
+   "Cardiology",
+   "Clinical Pharmacy",
+   "Nephrology / Renal Transplant"
+  ],
+  "mdt_final": "The committee recommends the immediate cessation of Lisinopril due to fetal risk. The patient should be transitioned to Methyldopa (first-line) or Labetalol. A baseline renal panel (Creatinine, eGFR) and weight assessment are required immediately to finalize dosing. The patient must be monitored clo",
+  "case_seconds": 759.4
+ },
+ {
+  "case": "c14_uti_warfarin",
+  "agents": {
+   "sbar": {
+    "valid": true,
+    "seconds": 35.3,
+    "problem": ""
+   },
+   "researcher": {
+    "valid": true,
+    "seconds": 70.3,
+    "problem": ""
+   },
+   "mdt": {
+    "valid": true,
+    "seconds": 300.1,
+    "problem": ""
+   },
+   "auditor": {
+    "valid": true,
+    "seconds": 273.1,
+    "problem": ""
+   },
+   "refine72h": {
+    "valid": true,
+    "seconds": 108.1,
+    "problem": ""
+   }
+  },
+  "mdt_specialists": [
+   "Infectious Disease",
+   "Cardiology",
+   "Geriatrics",
+   "Urology",
+   "Clinical Pharmacy"
+  ],
+  "mdt_final": "Treat for uncomplicated cystitis using Nitrofurantoin or Fosfomycin. Avoid Trimethoprim-Sulfamethoxazole to prevent significant INR elevation. Obtain a urine culture and current INR/CrCl immediately to confirm the plan and ensure safe dosing.",
+  "case_seconds": 787.3
  }
 ]
