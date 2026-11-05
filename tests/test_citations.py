@@ -47,3 +47,18 @@ def test_check_roundtable_flags_uncited_and_phantom_citations():
         {"specialist": "Nephrology", "problem": "no citation"},
         {"specialist": "ICU", "problem": "cites missing reference(s) [4]"},
     ]
+
+
+def test_pubmed_url_only_for_valid_pmid():
+    assert c.pubmed_url("12345") == "https://pubmed.ncbi.nlm.nih.gov/12345/"
+    assert c.pubmed_url("abc") == "" and c.pubmed_url("") == ""
+
+
+def test_check_evidence_refs():
+    recs = [{"id": "E1", "source": "brain", "ref": "x.md | H"},
+            {"id": "E2", "source": "pubmed", "ref": "PMID 123"},
+            {"id": "E3", "source": "pubmed", "ref": "PMID abc"}]
+    assert c.check_evidence_refs(["NONE", "E1", "E2"], recs) == []
+    flags = c.check_evidence_refs(["E9", "X1", "E3"], recs)
+    assert [f["problem"] for f in flags] == ["not in the evidence list", "malformed evidence ref",
+                                              "missing or malformed PMID"]

@@ -1,0 +1,43 @@
+{
+  "id": "c12_thyroid_anxiety",
+  "category": "trap",
+  "trap_kind": "tempting_wrong_anchor",
+  "case_text": "SYNTHETIC CASE (fictional). 34-year-old woman, 3 months of palpitations, tremor, sweating and weight loss of 6 kg despite a good appetite. A previous clinic called it an anxiety disorder. HR 112, regular. Fine tremor, warm moist hands, a smooth enlarged thyroid. TSH below 0.01 mU/L, free T4 raised. Not pregnant.",
+  "evidence_topics": [
+    "hyperthyroidism Graves disease diagnosis",
+    "thyrotoxicosis treatment antithyroid drugs"
+  ],
+  "expected_leading_diagnosis": {
+    "name": "hyperthyroidism (Graves disease)",
+    "synonyms": [
+      "graves disease",
+      "thyrotoxicosis",
+      "hyperthyroidism",
+      "overactive thyroid"
+    ]
+  },
+  "must_catch": [
+    {
+      "id": "MC1",
+      "critic": "critic_dx",
+      "terms": [
+        "anxiety",
+        "anchor*",
+        "premature closure"
+      ],
+      "why": "The earlier anxiety label is a tempting anchor."
+    }
+  ],
+  "must_not_claim": [
+    {
+      "id": "MN1",
+      "terms": [
+        "anxiety disorder is the diagnosis",
+        "this is an anxiety disorder",
+        "no thyroid treatment is needed"
+      ],
+      "why": "Thyroid tests show thyrotoxicosis."
+    }
+  ],
+  "reviewed": false
+}

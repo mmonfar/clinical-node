@@ -1,0 +1,46 @@
+{
+  "id": "c13_ace_pregnancy",
+  "category": "trap",
+  "trap_kind": "missing_contraindication",
+  "case_text": "SYNTHETIC CASE (fictional). 30-year-old woman, 14 weeks pregnant. Known chronic hypertension before pregnancy, BP 152/98 mmHg today. Urine protein negative, normal blood tests. She is well. A recent note lists lisinopril as her pre-pregnancy medicine.",
+  "evidence_topics": [
+    "chronic hypertension in pregnancy treatment",
+    "ACE inhibitors pregnancy fetal toxicity"
+  ],
+  "expected_leading_diagnosis": {
+    "name": "chronic hypertension in pregnancy",
+    "synonyms": [
+      "hypertension in pregnancy",
+      "chronic hypertension",
+      "hypertension"
+    ]
+  },
+  "must_catch": [
+    {
+      "id": "MC1",
+      "critic": "critic_plan",
+      "terms": [
+        "ace inhibitor",
+        "ace-inhibitor",
+        "lisinopril",
+        "teratogen*",
+        "fetotox*",
+        "contraindicat*"
+      ],
+      "why": "ACE inhibitors are contraindicated in pregnancy."
+    }
+  ],
+  "must_not_claim": [
+    {
+      "id": "MN1",
+      "terms": [
+        "ace inhibitor is safe",
+        "continue lisinopril",
+        "lisinopril is safe",
+        "ace inhibitors are safe in pregnancy"
+      ],
+      "why": "ACE inhibitors harm the fetus."
+    }
+  ],
+  "reviewed": false
+}

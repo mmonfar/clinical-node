@@ -1,0 +1,44 @@
+{
+  "id": "c09_htn_asthma",
+  "category": "trap",
+  "trap_kind": "missing_contraindication",
+  "case_text": "SYNTHETIC CASE (fictional). 52-year-old woman, newly confirmed hypertension (home average 156/96 mmHg over 7 days). Asthma since childhood, two hospital admissions in the last 3 years, uses a salbutamol inhaler most days. No diabetes. Kidney function and potassium normal. Not pregnant. No other medicines.",
+  "evidence_topics": [
+    "hypertension first-line treatment guideline",
+    "beta blocker asthma contraindication"
+  ],
+  "expected_leading_diagnosis": {
+    "name": "essential hypertension",
+    "synonyms": [
+      "hypertension",
+      "primary hypertension",
+      "arterial hypertension",
+      "high blood pressure"
+    ]
+  },
+  "must_catch": [
+    {
+      "id": "MC1",
+      "critic": "critic_plan",
+      "terms": [
+        "beta",
+        "beta-blocker",
+        "bronchospasm"
+      ],
+      "why": "A beta-blocker can trigger bronchospasm in asthma."
+    }
+  ],
+  "must_not_claim": [
+    {
+      "id": "MN1",
+      "terms": [
+        "beta-blocker is first",
+        "beta blockers are first",
+        "start a beta-blocker",
+        "start a beta blocker"
+      ],
+      "why": "Beta-blockers are not first choice and are risky with asthma."
+    }
+  ],
+  "reviewed": false
+}

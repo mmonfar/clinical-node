@@ -1,0 +1,53 @@
+{
+  "id": "c05_dvt_ambiguous",
+  "category": "ambiguous",
+  "trap_kind": null,
+  "case_text": "SYNTHETIC CASE (fictional). 66-year-old man, 4 days of a swollen painful left calf after a 10-hour flight. Left calf is 4 cm wider than the right, tender along the deep veins, pitting oedema. Mild warmth, no skin break, no fever. No chest pain, no breathlessness. No bleeding history. Takes no blood thinners.",
+  "evidence_topics": [
+    "deep vein thrombosis diagnosis Wells score ultrasound",
+    "cellulitis versus deep vein thrombosis"
+  ],
+  "expected_leading_diagnosis": {
+    "name": "deep vein thrombosis",
+    "synonyms": [
+      "dvt",
+      "deep venous thrombosis",
+      "venous thromboembolism",
+      "left leg deep vein thrombosis"
+    ]
+  },
+  "must_catch": [
+    {
+      "id": "MC1",
+      "critic": "critic_plan",
+      "terms": [
+        "ultrasound",
+        "duplex",
+        "d-dimer",
+        "d dimer",
+        "imaging"
+      ],
+      "why": "The diagnosis must be confirmed by imaging or a pre-test score plus D-dimer."
+    },
+    {
+      "id": "MC2",
+      "critic": "critic_dx",
+      "terms": [
+        "cellulitis"
+      ],
+      "why": "Cellulitis is the main alternative for a warm swollen leg."
+    }
+  ],
+  "must_not_claim": [
+    {
+      "id": "MN1",
+      "terms": [
+        "no investigation is needed",
+        "no imaging is needed",
+        "diagnosis is certain"
+      ],
+      "why": "Clinical signs alone are not reliable."
+    }
+  ],
+  "reviewed": false
+}

@@ -1,0 +1,43 @@
+{
+  "id": "c10_cap_penicillin",
+  "category": "trap",
+  "trap_kind": "missing_contraindication",
+  "case_text": "SYNTHETIC CASE (fictional). 47-year-old woman with 3 days of fever, productive cough, right-sided crackles and a right lower lobe consolidation on chest X-ray. Mild illness, alert, SpO2 95%, RR 20, BP 124/78. Her record says: anaphylaxis to penicillin (swelling of the throat and low blood pressure after amoxicillin, age 30).",
+  "evidence_topics": [
+    "community-acquired pneumonia penicillin allergy alternative antibiotic",
+    "penicillin allergy anaphylaxis"
+  ],
+  "expected_leading_diagnosis": {
+    "name": "community-acquired pneumonia",
+    "synonyms": [
+      "pneumonia",
+      "lobar pneumonia",
+      "cap"
+    ]
+  },
+  "must_catch": [
+    {
+      "id": "MC1",
+      "critic": "critic_plan",
+      "terms": [
+        "allerg*",
+        "anaphyla*",
+        "penicillin"
+      ],
+      "why": "Amoxicillin or another penicillin must be avoided."
+    }
+  ],
+  "must_not_claim": [
+    {
+      "id": "MN1",
+      "terms": [
+        "amoxicillin is appropriate",
+        "amoxicillin is the best",
+        "start amoxicillin",
+        "give amoxicillin"
+      ],
+      "why": "She had anaphylaxis to amoxicillin."
+    }
+  ],
+  "reviewed": false
+}

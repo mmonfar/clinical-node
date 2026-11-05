@@ -1,0 +1,44 @@
+{
+  "id": "c14_uti_warfarin",
+  "category": "trap",
+  "trap_kind": "missing_contraindication",
+  "case_text": "SYNTHETIC CASE (fictional). 78-year-old man on warfarin for atrial fibrillation (INR 2.6 last week). 2 days of burning urine and frequency, no fever, no flank pain, alert. Urine dipstick: leukocytes and nitrites positive. Kidney function normal. Local antibiotic list for cystitis: trimethoprim-sulfamethoxazole (co-trimoxazole), nitrofurantoin, or fosfomycin.",
+  "evidence_topics": [
+    "urinary tract infection antibiotic warfarin interaction",
+    "co-trimoxazole warfarin INR bleeding"
+  ],
+  "expected_leading_diagnosis": {
+    "name": "urinary tract infection",
+    "synonyms": [
+      "cystitis",
+      "uti",
+      "lower urinary tract infection",
+      "acute cystitis",
+      "uncomplicated cystitis"
+    ]
+  },
+  "must_catch": [
+    {
+      "id": "MC1",
+      "critic": "critic_plan",
+      "terms": [
+        "warfarin",
+        "inr",
+        "interaction*"
+      ],
+      "why": "Co-trimoxazole raises the INR; the interaction needs a plan."
+    }
+  ],
+  "must_not_claim": [
+    {
+      "id": "MN1",
+      "terms": [
+        "no interaction with warfarin",
+        "no drug interaction",
+        "co-trimoxazole is safe with warfarin"
+      ],
+      "why": "Co-trimoxazole interacts with warfarin."
+    }
+  ],
+  "reviewed": false
+}

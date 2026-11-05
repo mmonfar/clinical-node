@@ -108,6 +108,25 @@ streamlit run app.py
 
 ---
 
+## Debate engine (research software)
+
+The `debate/` package is a support tool for use before an M&M meeting. Local models (MedGemma and Qwen, run through Ollama) propose a diagnosis and plan, then critique each other. Evidence comes from a local knowledge base (optional) and PubMed. No cloud model is used in the debate.
+
+- Every output says **NOT REVIEWED**: no clinician has checked it. It supports the meeting; it does not replace the committee.
+- The evaluation cases in `eval/cases/` are synthetic (fictional). Their answer keys were drafted by the author and have not been reviewed by a clinician.
+- Not a medical device. Research and demonstration software only.
+
+How to run locally:
+
+1. Install and start [Ollama](https://ollama.com) yourself, and pull the models named in `docs/MODELS.md`. The code never starts Ollama or pulls models.
+2. Optional: set `DEBATE_KB_DIR` to a folder that holds `query_brain.py` to use a local knowledge base (read-only). If it is unset, there is no local knowledge base and evidence comes from PubMed only. PubMed needs `ENTREZ_EMAIL`.
+3. Check the plumbing with no models and no network: `python -m debate.eval --fake`
+4. Run with real models: `python -m debate.eval --live` (or `eval/run_overnight.ps1` on Windows).
+
+See `docs/SPEC_debate_engine.md` for the design.
+
+---
+
 ## Project Structure
 
 ```

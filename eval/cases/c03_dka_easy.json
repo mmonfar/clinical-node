@@ -1,0 +1,40 @@
+{
+  "id": "c03_dka_easy",
+  "category": "easy",
+  "trap_kind": null,
+  "case_text": "SYNTHETIC CASE (fictional). 19-year-old man with known type 1 diabetes. 1 day of vomiting, abdominal pain, thirst and fast deep breathing. Glucose 27 mmol/L, ketones 5.2 mmol/L, venous pH 7.08, bicarbonate 7 mmol/L. HR 118, BP 100/62. Potassium result is pending.",
+  "evidence_topics": [
+    "diabetic ketoacidosis management",
+    "diabetic ketoacidosis potassium insulin"
+  ],
+  "expected_leading_diagnosis": {
+    "name": "diabetic ketoacidosis",
+    "synonyms": [
+      "dka",
+      "ketoacidosis",
+      "diabetic ketoacidosis (dka)"
+    ]
+  },
+  "must_catch": [
+    {
+      "id": "MC1",
+      "critic": "critic_plan",
+      "terms": [
+        "potassium"
+      ],
+      "why": "Potassium must be known before insulin is started."
+    }
+  ],
+  "must_not_claim": [
+    {
+      "id": "MN1",
+      "terms": [
+        "oral rehydration alone",
+        "insulin is not needed",
+        "no insulin"
+      ],
+      "why": "DKA needs IV fluids and insulin."
+    }
+  ],
+  "reviewed": false
+}

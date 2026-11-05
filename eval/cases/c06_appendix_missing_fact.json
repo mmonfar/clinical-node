@@ -1,0 +1,40 @@
+{
+  "id": "c06_appendix_missing_fact",
+  "category": "trap",
+  "trap_kind": "missing_key_fact",
+  "case_text": "SYNTHETIC CASE (fictional). 24-year-old woman, 18 hours of belly pain that began around the navel and now sits in the right lower abdomen. Nausea, one vomit, Temp 37.9 C. Tender with guarding in the right iliac fossa. White cell count raised. She is sexually active. A pregnancy test and a date of last period are not recorded.",
+  "evidence_topics": [
+    "acute appendicitis diagnosis",
+    "ectopic pregnancy differential right lower quadrant pain"
+  ],
+  "expected_leading_diagnosis": {
+    "name": "acute appendicitis",
+    "synonyms": [
+      "appendicitis"
+    ]
+  },
+  "must_catch": [
+    {
+      "id": "MC1",
+      "critic": "critic_dx",
+      "terms": [
+        "ectopic",
+        "pregnan*",
+        "hcg"
+      ],
+      "why": "Pregnancy and ectopic pregnancy must be excluded in a woman of child-bearing age."
+    }
+  ],
+  "must_not_claim": [
+    {
+      "id": "MN1",
+      "terms": [
+        "ectopic pregnancy is excluded",
+        "pregnancy is excluded",
+        "pregnancy has been excluded"
+      ],
+      "why": "No test is documented."
+    }
+  ],
+  "reviewed": false
+}

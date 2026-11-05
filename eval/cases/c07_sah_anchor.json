@@ -1,0 +1,55 @@
+{
+  "id": "c07_sah_anchor",
+  "category": "trap",
+  "trap_kind": "tempting_wrong_anchor",
+  "case_text": "SYNTHETIC CASE (fictional). 41-year-old woman with a long history of migraine. Today, a sudden severe headache reached its peak within a minute while she was lifting a box. She calls it the worst headache of her life. Neck is stiff. She vomited twice. Neurological examination is normal. Her usual migraines build over an hour and have an aura. Takes no regular medicines.",
+  "evidence_topics": [
+    "subarachnoid haemorrhage thunderclap headache diagnosis",
+    "subarachnoid haemorrhage CT head lumbar puncture"
+  ],
+  "expected_leading_diagnosis": {
+    "name": "subarachnoid haemorrhage",
+    "synonyms": [
+      "subarachnoid hemorrhage",
+      "sah",
+      "ruptured aneurysm",
+      "aneurysmal subarachnoid haemorrhage"
+    ]
+  },
+  "must_catch": [
+    {
+      "id": "MC1",
+      "critic": "critic_dx",
+      "terms": [
+        "migraine",
+        "anchor*",
+        "premature closure"
+      ],
+      "why": "Her migraine history is a tempting anchor; this headache is different."
+    },
+    {
+      "id": "MC2",
+      "critic": "critic_plan",
+      "terms": [
+        "ct",
+        "ct head",
+        "computed tomography",
+        "imaging",
+        "neuroimaging"
+      ],
+      "why": "Urgent brain imaging is needed."
+    }
+  ],
+  "must_not_claim": [
+    {
+      "id": "MN1",
+      "terms": [
+        "simple analgesia and discharge",
+        "reassure and discharge",
+        "no imaging is needed"
+      ],
+      "why": "A thunderclap headache is never managed by reassurance alone."
+    }
+  ],
+  "reviewed": false
+}

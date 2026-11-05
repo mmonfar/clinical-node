@@ -57,3 +57,9 @@ video/out/
 **/.claude/
 # Local marketing drafts are not tracked.
 marketing/
+eval/runs/
+
+# Unpublished work and run results: kept local, not tracked.
+paper/
+eval/rescored/
+debate/smoke_out/

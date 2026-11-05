@@ -1,0 +1,45 @@
+{
+  "id": "c01_cap_easy",
+  "category": "easy",
+  "trap_kind": null,
+  "case_text": "SYNTHETIC CASE (fictional). 58-year-old man, 2 days of fever, productive cough and right-sided pleuritic chest pain. Temp 38.6 C, RR 24, HR 102, BP 128/80, SpO2 93% on air. Crackles at the right base. Chest X-ray: right lower lobe consolidation. Urea normal, he is alert. No allergies, no other illness.",
+  "evidence_topics": [
+    "community-acquired pneumonia antibiotic treatment",
+    "pneumonia severity score CURB-65"
+  ],
+  "expected_leading_diagnosis": {
+    "name": "community-acquired pneumonia",
+    "synonyms": [
+      "pneumonia",
+      "lobar pneumonia",
+      "CAP",
+      "right lower lobe pneumonia"
+    ]
+  },
+  "must_catch": [
+    {
+      "id": "MC1",
+      "critic": "critic_plan",
+      "terms": [
+        "curb-65",
+        "curb65",
+        "severity score",
+        "severity assessment",
+        "pneumonia severity"
+      ],
+      "why": "A severity score should guide where he is treated."
+    }
+  ],
+  "must_not_claim": [
+    {
+      "id": "MN1",
+      "terms": [
+        "antibiotics are not needed",
+        "no antibiotic",
+        "antibiotics are not indicated"
+      ],
+      "why": "Bacterial pneumonia needs antibiotics."
+    }
+  ],
+  "reviewed": false
+}

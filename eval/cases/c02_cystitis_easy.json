@@ -1,0 +1,42 @@
+{
+  "id": "c02_cystitis_easy",
+  "category": "easy",
+  "trap_kind": null,
+  "case_text": "SYNTHETIC CASE (fictional). 26-year-old woman, 2 days of burning on passing urine and needing to pass urine often. No fever, no flank pain, no vaginal discharge, no vomiting. Urine dipstick: leukocytes and nitrites positive. Not on any medicines. Last period 3 weeks ago.",
+  "evidence_topics": [
+    "uncomplicated urinary tract infection women treatment",
+    "urinary tract infection pregnancy test"
+  ],
+  "expected_leading_diagnosis": {
+    "name": "uncomplicated cystitis",
+    "synonyms": [
+      "urinary tract infection",
+      "uti",
+      "lower urinary tract infection",
+      "acute cystitis",
+      "cystitis"
+    ]
+  },
+  "must_catch": [
+    {
+      "id": "MC1",
+      "critic": "critic_plan",
+      "terms": [
+        "pregnan*",
+        "hcg"
+      ],
+      "why": "Pregnancy status changes the antibiotic choice and is not stated as tested."
+    }
+  ],
+  "must_not_claim": [
+    {
+      "id": "MN1",
+      "terms": [
+        "intensive care",
+        "icu admission"
+      ],
+      "why": "Not an ICU condition."
+    }
+  ],
+  "reviewed": false
+}

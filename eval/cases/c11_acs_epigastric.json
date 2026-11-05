@@ -1,0 +1,60 @@
+{
+  "id": "c11_acs_epigastric",
+  "category": "trap",
+  "trap_kind": "missing_key_fact",
+  "case_text": "SYNTHETIC CASE (fictional). 57-year-old man with type 2 diabetes, smoker, high cholesterol. 45 minutes of heavy pain in the upper abdomen and lower chest, spreading to the jaw, with sweating and nausea. It started while carrying shopping. Pale, HR 96, BP 146/88, SpO2 97%. Abdomen soft and not tender. An ECG and a troponin have not been done yet.",
+  "evidence_topics": [
+    "acute coronary syndrome diagnosis ECG troponin",
+    "chest pain differential epigastric pain myocardial infarction"
+  ],
+  "expected_leading_diagnosis": {
+    "name": "acute coronary syndrome",
+    "synonyms": [
+      "myocardial infarction",
+      "acs",
+      "heart attack",
+      "stemi",
+      "nstemi",
+      "unstable angina",
+      "acute myocardial infarction"
+    ]
+  },
+  "must_catch": [
+    {
+      "id": "MC1",
+      "critic": "critic_plan",
+      "terms": [
+        "ecg",
+        "ekg",
+        "electrocardiogram",
+        "troponin"
+      ],
+      "why": "ECG and troponin are the key missing tests."
+    },
+    {
+      "id": "MC2",
+      "critic": "critic_dx",
+      "terms": [
+        "gastritis",
+        "dyspepsia",
+        "reflux",
+        "anchor*",
+        "premature closure"
+      ],
+      "why": "Upper abdominal pain can lead to a wrong gastro anchor."
+    }
+  ],
+  "must_not_claim": [
+    {
+      "id": "MN1",
+      "terms": [
+        "gastritis is confirmed",
+        "this is reflux",
+        "no cardiac test is needed",
+        "cardiac cause is excluded"
+      ],
+      "why": "A cardiac cause is not excluded."
+    }
+  ],
+  "reviewed": false
+}

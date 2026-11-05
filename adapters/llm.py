@@ -27,8 +27,10 @@ import hashlib
 import json
 import os
 import time
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
 from openai import OpenAI
@@ -48,6 +50,11 @@ DEFAULT_RUN_LOG = Path(__file__).resolve().parent.parent / "logs" / "llm_runs.js
 # Request parameters worth recording for reproducibility. Anything else
 # (notably ``messages``) is left out of the log on purpose.
 _LOGGED_PARAMS = ("temperature", "max_tokens", "seed", "top_p", "response_format")
+
+# Local Ollama backend (debate engine, SPEC section 5). Plain HTTP, stdlib only.
+# Override the address with OLLAMA_HOST_URL. Local only.
+OLLAMA_URL = "http://localhost:11434"
+OLLAMA_TIMEOUT = 600.0  # seconds; local models on a laptop can be slow
 
 
 def get_client() -> OpenAI:
@@ -75,7 +82,15 @@ def complete(**kwargs: Any) -> Any:
     keyword arguments (model, temperature, messages, response_format, ...)
     are forwarded unchanged. Each call also appends one metadata record
     to the run log (``run_log_path()``); the response is returned as-is.
+
+    Default backend is OpenAI, unchanged. Pass ``backend="ollama"`` to use
+    the local Ollama server (see ``_ollama_complete``).
     """
+    backend = kwargs.pop("backend", "openai")
+    if backend == "ollama":
+        return _ollama_complete(kwargs)
+    if backend != "openai":
+        raise ValueError(f"unknown backend: {backend!r}")
     started = time.perf_counter()
     try:
         response = get_client().chat.completions.create(**kwargs)
@@ -83,6 +98,93 @@ def complete(**kwargs: Any) -> Any:
         _log_run(kwargs, started, response=None, error=type(exc).__name__)
         raise
     _log_run(kwargs, started, response=response, error=None)
+    return response
+
+
+def _ollama_url() -> str:
+    return (os.environ.get("OLLAMA_HOST_URL") or OLLAMA_URL).rstrip("/")
+
+
+def _http_json(path: str, payload: dict | None = None, timeout: float = OLLAMA_TIMEOUT) -> dict:
+    """GET (no payload) or POST JSON to the local Ollama server."""
+    data = None if payload is None else json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        _ollama_url() + path,
+        data=data,
+        headers={"Content-Type": "application/json"},
+        method="GET" if data is None else "POST",
+    )
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def ollama_digest(model: str) -> str | None:
+    """Model digest from /api/tags (the tag alone can change). None if unknown."""
+    try:
+        for entry in _http_json("/api/tags", timeout=10.0).get("models", []):
+            if model in (entry.get("name"), entry.get("model")):
+                return entry.get("digest")
+    except Exception:
+        return None
+    return None
+
+
+def ollama_running() -> bool:
+    """True if the local Ollama server answers. Never starts it."""
+    try:
+        _http_json("/api/tags", timeout=3.0)
+        return True
+    except Exception:
+        return False
+
+
+def _ollama_complete(kwargs: dict) -> Any:
+    """Chat call to Ollama, returned in the OpenAI response shape.
+
+    Maps: temperature, seed, top_p -> options; max_tokens -> num_predict;
+    num_ctx -> options; response_format {"type":"json_schema","schema":S}
+    or {"type":"json_object"} -> Ollama ``format``; ``think`` passed as given.
+    """
+    started = time.perf_counter()
+    options = {}
+    for key in ("temperature", "seed", "top_p", "repeat_penalty"):
+        if key in kwargs:
+            options[key] = kwargs[key]
+    if "max_tokens" in kwargs:
+        options["num_predict"] = kwargs["max_tokens"]
+    if "num_ctx" in kwargs:
+        options["num_ctx"] = kwargs["num_ctx"]
+    payload = {
+        "model": kwargs.get("model"),
+        "messages": kwargs.get("messages"),
+        "stream": False,
+        "options": options,
+    }
+    if "think" in kwargs:
+        payload["think"] = kwargs["think"]
+    rf = kwargs.get("response_format")
+    if isinstance(rf, dict):
+        if rf.get("type") == "json_schema":
+            payload["format"] = rf.get("schema")
+        elif rf.get("type") == "json_object":
+            payload["format"] = "json"
+    digest = ollama_digest(kwargs.get("model"))
+    extra = {"backend": "ollama", "model_digest": digest}
+    try:
+        raw = _http_json("/api/chat", payload)
+    except Exception as exc:
+        _log_run(kwargs, started, response=None, error=type(exc).__name__, extra=extra)
+        raise
+    msg = raw.get("message") or {}
+    response = SimpleNamespace(
+        model=raw.get("model"),
+        choices=[SimpleNamespace(message=SimpleNamespace(
+            role="assistant", content=msg.get("content", "")),
+            finish_reason="length" if raw.get("done_reason") == "length" else "stop")],
+        usage=SimpleNamespace(prompt_tokens=raw.get("prompt_eval_count"),
+                              completion_tokens=raw.get("eval_count")),
+    )
+    _log_run(kwargs, started, response=response, error=None, extra=extra)
     return response
 
 
@@ -103,7 +205,8 @@ def _field(obj: Any, name: str) -> Any:
     return getattr(obj, name, None)
 
 
-def _log_run(kwargs: dict, started: float, response: Any, error: str | None) -> None:
+def _log_run(kwargs: dict, started: float, response: Any, error: str | None,
+             extra: dict | None = None) -> None:
     """Append one metadata record. Never raises: logging must not break a run."""
     usage = _field(response, "usage") if response is not None else None
     record = {
@@ -118,6 +221,8 @@ def _log_run(kwargs: dict, started: float, response: Any, error: str | None) -> 
         "ok": error is None,
         "error": error,
     }
+    if extra:
+        record.update(extra)
     try:
         path = run_log_path()
         path.parent.mkdir(parents=True, exist_ok=True)

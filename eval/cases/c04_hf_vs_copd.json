@@ -1,0 +1,44 @@
+{
+  "id": "c04_hf_vs_copd",
+  "category": "ambiguous",
+  "trap_kind": null,
+  "case_text": "SYNTHETIC CASE (fictional). 70-year-old woman with known COPD and hypertension. 3 days of worse breathlessness, needs 3 pillows to sleep, ankle swelling. Raised jugular venous pressure, bibasal crackles, mild wheeze, pitting oedema to the knees. NT-proBNP markedly raised. Chest X-ray: enlarged heart and upper-lobe vessel prominence. Afebrile, sputum unchanged.",
+  "evidence_topics": [
+    "acute heart failure diagnosis and diuretic treatment",
+    "COPD exacerbation differential diagnosis"
+  ],
+  "expected_leading_diagnosis": {
+    "name": "acute decompensated heart failure",
+    "synonyms": [
+      "heart failure",
+      "acute heart failure",
+      "decompensated heart failure",
+      "congestive heart failure",
+      "left ventricular failure",
+      "cardiac failure"
+    ]
+  },
+  "must_catch": [
+    {
+      "id": "MC1",
+      "critic": "critic_dx",
+      "terms": [
+        "copd",
+        "chronic obstructive"
+      ],
+      "why": "COPD exacerbation is a real alternative and wheeze is present."
+    }
+  ],
+  "must_not_claim": [
+    {
+      "id": "MN1",
+      "terms": [
+        "bronchodilators alone",
+        "no diuretic",
+        "diuretics are contraindicated"
+      ],
+      "why": "Congestion needs treatment of the congestion."
+    }
+  ],
+  "reviewed": false
+}

@@ -9,7 +9,8 @@ cites points to a reference that exists. It does NOT call PubMed, so it
 cannot tell whether a PMID is real or whether the article supports the
 claim. Those checks are on the plan, not in place.
 
-Pure functions, no I/O. Not yet wired into the UI or the minutes.
+Pure functions, no I/O. Wired into the debate output (debate/output.py) through
+check_evidence_refs() and pubmed_url(). Not yet wired into the UI or the minutes.
 """
 
 from __future__ import annotations
@@ -71,4 +72,34 @@ def check_roundtable(roundtable: list[dict], n_refs: int) -> list[dict]:
         bad = check_citation_numbers(cites, n_refs)
         if bad:
             flags.append({"specialist": who, "problem": f"cites missing reference(s) {bad}"})
+    return flags
+
+
+_EREF_RE = re.compile(r"^E([1-9]\d*)$")
+
+
+def pubmed_url(pmid: object) -> str:
+    """PubMed link for a valid PMID, else an empty string (never a made-up link)."""
+    return f"{PUBMED_URL_PREFIX}{str(pmid).strip()}/" if is_valid_pmid(pmid) else ""
+
+
+def check_evidence_refs(refs: list[str], records: list[dict]) -> list[dict]:
+    """Check debate evidence refs ("E3" or "NONE") against the evidence list.
+
+    Flags a ref that is malformed, points outside the list, or is a PubMed
+    record without a valid PMID. Format only: it cannot tell if the source supports the claim.
+    """
+    flags: list[dict] = []
+    ids = {r.get("id"): r for r in records}
+    for ref in refs:
+        if ref == "NONE":
+            continue
+        m = _EREF_RE.match(str(ref))
+        if not m:
+            flags.append({"ref": ref, "problem": "malformed evidence ref"})
+        elif check_citation_numbers([int(m.group(1))], len(records)) or ref not in ids:
+            flags.append({"ref": ref, "problem": "not in the evidence list"})
+        elif ids[ref].get("source") == "pubmed" and not is_valid_pmid(
+                str(ids[ref].get("ref", "")).replace("PMID", "").strip()):
+            flags.append({"ref": ref, "problem": "missing or malformed PMID"})
     return flags
