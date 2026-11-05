@@ -171,7 +171,9 @@ When new PubMed evidence contradicts recorded minutes, the case is flagged **Nee
 
 - `.env` is gitignored. Never commit keys.
 - `cases.json` and `minutes/` are gitignored. No case data is tracked in version control.
-- Model calls stay on this machine (Ollama). The only outside call is the NCBI Entrez API, which receives search terms.
+- No data is sent anywhere other than PubMed (NCBI Entrez). Model calls stay on this machine (Ollama; `adapters/llm.py`, default `http://localhost:11434`).
+- What goes to NCBI (`pubmed_client.py`): the search query text (the model writes it from the case, so it can contain case terms such as the condition, age group or drug names); the number of results wanted; the sort order; the PubMed IDs to fetch; your `ENTREZ_EMAIL`; and `ENTREZ_API_KEY` if you set one. Do not type names, dates of birth or ID numbers into a case.
+- The full case text, the SBAR, the minutes and the model answers are not sent to NCBI.
 - No authentication layer is included. Do not expose this app on a public URL without adding one.
 
 ---
