@@ -1,0 +1,230 @@
+[
+ {
+  "case": "c01_cap_easy",
+  "agents": {
+   "sbar": {
+    "valid": true,
+    "seconds": 37.0,
+    "problem": ""
+   },
+   "researcher": {
+    "valid": false,
+    "seconds": 48.1,
+    "problem": "HTTPError: HTTP Error 500: Internal Server Error"
+   },
+   "researcher_synthesis_only": {
+    "valid": true,
+    "seconds": 38.0,
+    "problem": "empty or very short"
+   },
+   "mdt": {
+    "valid": true,
+    "seconds": 466.3,
+    "problem": "cites reference numbers although no references exist (offline)"
+   },
+   "auditor": {
+    "valid": true,
+    "seconds": 376.4,
+    "problem": ""
+   },
+   "refine72h": {
+    "valid": true,
+    "seconds": 120.6,
+    "problem": ""
+   }
+  },
+  "mdt_specialists": [
+   "Pulmonology",
+   "Infectious Disease",
+   "ICU / Intensivist",
+   "Radiology / Interventional Radiology",
+   "Clinical Pharmacy"
+  ],
+  "mdt_final": "The committee recommends immediate admission for observation due to borderline oxygen saturation (93%) and respiratory rate (24). Initiate empiric antibiotic therapy for community-acquired pneumonia while awaiting microbiological results. Calculate CrCl immediately to ensure safe dosing. A repeat CX",
+  "case_seconds": 1086.5
+ },
+ {
+  "case": "c02_cystitis_easy",
+  "agents": {
+   "sbar": {
+    "valid": true,
+    "seconds": 47.8,
+    "problem": ""
+   },
+   "researcher": {
+    "valid": false,
+    "seconds": 56.7,
+    "problem": "HTTPError: HTTP Error 500: Internal Server Error"
+   },
+   "researcher_synthesis_only": {
+    "valid": true,
+    "seconds": 63.5,
+    "problem": "empty or very short"
+   },
+   "mdt": {
+    "valid": true,
+    "seconds": 371.3,
+    "problem": "cites reference numbers although no references exist (offline)"
+   },
+   "auditor": {
+    "valid": true,
+    "seconds": 301.9,
+    "problem": ""
+   },
+   "refine72h": {
+    "valid": true,
+    "seconds": 171.8,
+    "problem": ""
+   }
+  },
+  "mdt_specialists": [
+   "Urology",
+   "Infectious Disease",
+   "Clinical Pharmacy",
+   "General / Trauma Surgery"
+  ],
+  "mdt_final": "The committee recommends outpatient management for uncomplicated cystitis. Order a urine culture, pregnancy test, and serum creatinine. Initiate Nitrofurantoin 100mg BID for 5 days, provided CrCl is >30 mL/min. Provide clear 'red flag' instructions (fever, flank pain) for immediate return to the ER.",
+  "case_seconds": 1013.6
+ },
+ {
+  "case": "c03_dka_easy",
+  "agents": {
+   "sbar": {
+    "valid": true,
+    "seconds": 53.8,
+    "problem": ""
+   },
+   "researcher": {
+    "valid": true,
+    "seconds": 80.2,
+    "problem": ""
+   },
+   "mdt": {
+    "valid": false,
+    "seconds": 460.1,
+    "problem": "JSONDecodeError: Expecting value: line 51 column 9 (char 2298)"
+   }
+  },
+  "case_seconds": 594.7
+ },
+ {
+  "case": "c04_hf_vs_copd",
+  "agents": {
+   "sbar": {
+    "valid": true,
+    "seconds": 61.7,
+    "problem": ""
+   },
+   "researcher": {
+    "valid": true,
+    "seconds": 77.3,
+    "problem": ""
+   },
+   "mdt": {
+    "valid": true,
+    "seconds": 409.2,
+    "problem": ""
+   },
+   "auditor": {
+    "valid": true,
+    "seconds": 290.2,
+    "problem": ""
+   },
+   "refine72h": {
+    "valid": true,
+    "seconds": 160.2,
+    "problem": ""
+   }
+  },
+  "mdt_specialists": [
+   "Cardiology",
+   "Pulmonology",
+   "ICU / Intensivist",
+   "Clinical Pharmacy"
+  ],
+  "mdt_final": "The committee recommends immediate admission for management of acute decompensated heart failure. Initiate IV diuresis while strictly monitoring renal function (CrCl) and electrolytes. Coordinate with Pulmonology to ensure COPD stability. An urgent echocardiogram is mandatory to guide long-term mana",
+  "case_seconds": 999.7
+ },
+ {
+  "case": "c05_dvt_ambiguous",
+  "agents": {
+   "sbar": {
+    "valid": true,
+    "seconds": 40.0,
+    "problem": ""
+   },
+   "researcher": {
+    "valid": false,
+    "seconds": 48.6,
+    "problem": "HTTPError: HTTP Error 500: Internal Server Error"
+   },
+   "researcher_synthesis_only": {
+    "valid": true,
+    "seconds": 43.1,
+    "problem": ""
+   },
+   "mdt": {
+    "valid": true,
+    "seconds": 411.1,
+    "problem": "cites reference numbers although no references exist (offline)"
+   },
+   "auditor": {
+    "valid": true,
+    "seconds": 418.0,
+    "problem": ""
+   },
+   "refine72h": {
+    "valid": true,
+    "seconds": 172.0,
+    "problem": ""
+   }
+  },
+  "mdt_specialists": [
+   "Cardiology",
+   "Vascular Surgery",
+   "Clinical Pharmacy",
+   "Radiology / Interventional Radiology",
+   "Internal Medicine"
+  ],
+  "mdt_final": "Confirm DVT via urgent Doppler ultrasound. Simultaneously calculate Cockcroft-Gault CrCl. If CrCl >30 mL/min, initiate DOAC therapy. If CrCl <30 mL/min, consider LMWH with renal adjustment. Monitor for signs of pulmonary embolism.",
+  "case_seconds": 1133.5
+ },
+ {
+  "case": "c06_appendix_missing_fact",
+  "agents": {
+   "sbar": {
+    "valid": true,
+    "seconds": 58.7,
+    "problem": ""
+   },
+   "researcher": {
+    "valid": true,
+    "seconds": 96.2,
+    "problem": ""
+   },
+   "mdt": {
+    "valid": true,
+    "seconds": 344.1,
+    "problem": ""
+   },
+   "auditor": {
+    "valid": true,
+    "seconds": 284.5,
+    "problem": ""
+   },
+   "refine72h": {
+    "valid": false,
+    "seconds": 496.6,
+    "problem": "RuntimeError: model call or JSON failed (swallowed by the check):   GPT contradiction check failed: Expecting value: line 1 column 1 (char 0)\n"
+   }
+  },
+  "mdt_specialists": [
+   "General / Trauma Surgery",
+   "OB-GYN",
+   "Radiology / Interventional Radiology",
+   "Emergency Medicine"
+  ],
+  "mdt_final": "The committee recommends an immediate 'dual-track' diagnostic approach: 1) Obtain a serum $\beta$-hCG and perform a pelvic ultrasound to rule out ectopic pregnancy. 2) Simultaneously prepare for a surgical consultation for suspected acute appendicitis. Surgical intervention should only proceed once e",
+  "case_seconds": 1281.0
+ }
+]
