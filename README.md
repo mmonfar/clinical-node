@@ -24,15 +24,15 @@ Always involve appropriate clinical specialists before acting on any output.
 
 ## Architecture
 
-This repo has two separate parts. The **Streamlit app** in the table below uses cloud models through the OpenAI API, so it needs an API key. The **debate engine** (`debate/`, see [below](#debate-engine-research-software)) uses local models only, through Ollama. The app does not call the debate engine yet.
+This repo has two separate parts. The **Streamlit app** in the table below uses local models through Ollama. It needs no API key and sends no case text to a cloud service. The **debate engine** (`debate/`, see [below](#debate-engine-research-software)) uses local models only, through Ollama. The app does not call the debate engine yet.
 
-Three LLM agents collaborate on each case:
+Three LLM agents collaborate on each case. The models are set in one place, `AGENT_MODELS` in `adapters/llm.py`:
 
 | Agent | Model | Temp | Role |
 |---|---|---|---|
-| Researcher | gpt-4o-mini | 0.0 | PubMed multi-pillar evidence search + synthesis |
-| MDT Roundtable | gpt-4o | 0.25 | 360° specialist debate, gap-finding, risk heatmap |
-| Auditor | gpt-4o-mini | 0.0 | Formal Markdown M&M minutes |
+| Researcher | qwen3:8b | 0.0 | PubMed multi-pillar evidence search + synthesis |
+| MDT Roundtable | gemma4:12b | 0.25 | 360° specialist debate, gap-finding, risk heatmap |
+| Auditor | qwen3:8b | 0.0 | Formal Markdown M&M minutes |
 
 ### Evidence Ladder
 
@@ -94,11 +94,10 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Edit `.env` and add your keys:
+Edit `.env` and add your PubMed settings. No model API key is needed. Install [Ollama](https://ollama.com) and pull the models listed in `docs/MODELS.md` first.
 
 | Variable | Source |
 |---|---|
-| `OPENAI_API_KEY` | [platform.openai.com](https://platform.openai.com/api-keys) |
 | `ENTREZ_EMAIL` | Your email — required by NCBI |
 | `ENTREZ_API_KEY` | [NCBI account](https://www.ncbi.nlm.nih.gov/account/) — optional, raises rate limit to 10 req/s |
 
@@ -170,9 +169,9 @@ When new PubMed evidence contradicts recorded minutes, the case is flagged **Nee
 
 ## Infosec Notes
 
-- `.env` is gitignored. Never commit API keys.
+- `.env` is gitignored. Never commit keys.
 - `cases.json` and `minutes/` are gitignored. No case data is tracked in version control.
-- No data is sent anywhere other than the OpenAI API and NCBI Entrez API.
+- Model calls stay on this machine (Ollama). The only outside call is the NCBI Entrez API, which receives search terms.
 - No authentication layer is included. Do not expose this app on a public URL without adding one.
 
 ---

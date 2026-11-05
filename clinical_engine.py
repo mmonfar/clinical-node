@@ -5,9 +5,12 @@ Virtual 360-Degree MDT Committee.
 
 Models
 ------
-Researcher       gpt-4o-mini  temp=0.0   PubMed query extraction + synthesis.
-MDT Roundtable   gpt-4o       temp=0.25  Transcript-style HOD debate + gap-finder.
-Auditor          gpt-4o-mini  temp=0.0   Formal minutes with MDT & gap sections.
+Local Ollama models only. The model for each agent is set in ONE place:
+AGENT_MODELS in adapters/llm.py.
+
+Researcher       temp=0.0   PubMed query extraction + synthesis.
+MDT Roundtable   temp=0.25  Transcript-style HOD debate + gap-finder.
+Auditor          temp=0.0   Formal minutes with MDT & gap sections.
 """
 
 import json
@@ -15,7 +18,7 @@ from datetime import datetime, timezone
 
 from dotenv import load_dotenv
 
-from adapters.llm import complete
+from adapters.llm import agent_kwargs, agent_label, complete
 import pubmed_client
 import state_manager
 
@@ -133,12 +136,12 @@ def _extract_keywords(sbar: dict) -> list:
 
 def parse_sbar_from_text(text: str) -> dict:
     """
-    Extract SBAR fields from free-text clinical input using gpt-4o-mini.
+    Extract SBAR fields from free-text clinical input with the local SBAR model.
 
     Returns dict: situation, background, assessment, recommendation.
     """
     response = complete(
-        model="gpt-4o-mini",
+        **agent_kwargs("sbar"),
         temperature=0.0,
         response_format={"type": "json_object"},
         messages=[
@@ -163,7 +166,7 @@ def parse_sbar_from_text(text: str) -> dict:
 
 def build_pubmed_query(sbar: dict) -> str:
     """
-    Extract focused MeSH-compatible clinical search terms from SBAR using gpt-4o-mini.
+    Extract focused MeSH-compatible clinical search terms from SBAR with the local SBAR model.
 
     Returns a concise Boolean PubMed query string (5-8 terms max).
     """
@@ -174,7 +177,7 @@ def build_pubmed_query(sbar: dict) -> str:
     ]))
 
     response = complete(
-        model="gpt-4o-mini",
+        **agent_kwargs("researcher"),
         temperature=0.0,
         messages=[
             {
@@ -213,7 +216,7 @@ def build_pillar_queries(sbar: dict, initial_query: str) -> dict:
         sbar.get("assessment", ""),
     ]))
     response = complete(
-        model="gpt-4o-mini",
+        **agent_kwargs("researcher"),
         temperature=0.0,
         response_format={"type": "json_object"},
         messages=[
@@ -391,7 +394,7 @@ def researcher_search(query: str, sbar: dict | None = None) -> dict:
 
 def researcher_synthesize(sbar: dict, evidence: dict) -> str:
     """
-    Synthesize PubMed abstracts into a structured evidence summary (gpt-4o-mini).
+    Synthesize PubMed abstracts into a structured evidence summary (local Researcher model).
 
     For multi-pillar results, groups abstracts by pillar and mandates an explicit
     pillar gap statement in the synthesis.
@@ -444,7 +447,7 @@ def researcher_synthesize(sbar: dict, evidence: dict) -> str:
         pillar_instruction = ""
 
     response = complete(
-        model="gpt-4o-mini",
+        **agent_kwargs("researcher"),
         temperature=0.0,
         messages=[
             {
@@ -504,7 +507,7 @@ def mdt_roundtable_review(
     specialty_catalogue = json.dumps(MDT_SPECIALTIES, indent=2)
 
     response = complete(
-        model="gpt-4o",
+        **agent_kwargs("mdt"),
         temperature=0.25,
         response_format={"type": "json_object"},
         messages=[
@@ -637,7 +640,7 @@ def auditor_record(case_id: str, output: dict) -> str:
     )
 
     response = complete(
-        model="gpt-4o-mini",
+        **agent_kwargs("auditor"),
         temperature=0.0,
         messages=[
             {
@@ -695,7 +698,7 @@ def auditor_record(case_id: str, output: dict) -> str:
     state_manager.append_minutes(
         case_id=case_id,
         content=minutes_text,
-        author="Auditor (GPT-4o-mini)",
+        author=f"Auditor ({agent_label('auditor')})",
     )
 
     evidence_urls = [a["url"] for a in articles]

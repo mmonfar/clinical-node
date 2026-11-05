@@ -1,25 +1,17 @@
 """
 adapters/llm.py
 ----------------
-Single place that owns the OpenAI client for the Clinical Intelligence Node.
+Single place for every model call in the Clinical Intelligence Node.
 
-Tier-3 fix (architecture audit): both ``clinical_engine.py`` and
-``cron_refine.py`` used to build their own module-level
-``OpenAI(api_key=os.environ["OPENAI_API_KEY"])`` at import time. That meant
-importing either module — including for unit tests — raised ``KeyError``
-whenever ``OPENAI_API_KEY`` was not set, and each of the 7 call sites across
-the two modules configured its own (mostly absent) request timeout.
+All calls go to a local Ollama server on this machine. Nothing is sent to a
+cloud service and no API key is needed. Importing this module never needs a
+key, a network or a running server.
 
-This module fixes both problems without changing any behaviour:
-
-- the client is created lazily, on first use, so importing modules that call
-  ``complete()`` no longer requires the API key to be set;
-- the client is created exactly once, with one explicit timeout, and every
-  call site goes through the single ``complete()`` helper below.
-
-Prompts, models and parameters are untouched — ``complete(**kwargs)`` passes
-everything straight through to ``client.chat.completions.create``.
+Which model each agent uses is set in ONE place: ``AGENT_MODELS`` below. Use
+only models that are already installed (see docs/MODELS.md). The code never
+pulls a model.
 """
+
 
 from __future__ import annotations
 
@@ -33,14 +25,6 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
-from openai import OpenAI
-
-# Applies to every chat-completion call made through complete(). Previously
-# at most one call site set a timeout; the rest had none.
-DEFAULT_TIMEOUT = 60.0  # seconds
-
-_client: OpenAI | None = None
-
 # Append-only audit log of every complete() call (see docs/GOVERNANCE.md).
 # One JSON object per line. It holds metadata only: a SHA-256 of the
 # messages, never the prompt or output text, so no case content lands here.
@@ -51,54 +35,45 @@ DEFAULT_RUN_LOG = Path(__file__).resolve().parent.parent / "logs" / "llm_runs.js
 # (notably ``messages``) is left out of the log on purpose.
 _LOGGED_PARAMS = ("temperature", "max_tokens", "seed", "top_p", "response_format")
 
+# One config dict: the model for each agent. Installed models only (docs/MODELS.md).
+# "think": False turns off Qwen3 thinking mode so the answer is plain text/JSON.
+AGENT_MODELS = {
+    "sbar":       {"model": "qwen3:8b",   "think": False},  # SBAR step
+    "researcher": {"model": "qwen3:8b",   "think": False},  # Researcher
+    "mdt":        {"model": "gemma4:12b"},                  # MDT Roundtable
+    "auditor":    {"model": "qwen3:8b",   "think": False},  # Auditor
+    "refine":     {"model": "gemma4:12b"},                  # 72-hour contradiction check
+}
+
+
+def agent_kwargs(agent: str) -> dict:
+    """Model settings for one agent, from AGENT_MODELS. Unknown agent = KeyError."""
+    return dict(AGENT_MODELS[agent])
+
+
+def agent_label(agent: str) -> str:
+    """Model name for author lines in the minutes."""
+    return AGENT_MODELS[agent]["model"]
+
+
 # Local Ollama backend (debate engine, SPEC section 5). Plain HTTP, stdlib only.
 # Override the address with OLLAMA_HOST_URL. Local only.
 OLLAMA_URL = "http://localhost:11434"
 OLLAMA_TIMEOUT = 600.0  # seconds; local models on a laptop can be slow
 
 
-def get_client() -> OpenAI:
-    """Return the shared OpenAI client, constructing it on first use.
-
-    Deferred construction is the point: a module that only calls this
-    function inside a function body (never at import time) can be imported
-    with no ``OPENAI_API_KEY`` set at all — required for unit-testing the
-    engine without a key or network access.
-    """
-    global _client
-    if _client is None:
-        _client = OpenAI(
-            api_key=os.environ["OPENAI_API_KEY"],
-            timeout=DEFAULT_TIMEOUT,
-        )
-    return _client
-
-
 def complete(**kwargs: Any) -> Any:
-    """Run a chat completion through the shared, timeout-bound client.
+    """Run a chat completion on the local Ollama server.
 
-    Every call site in this repo should route through here instead of
-    calling ``OpenAI(...).chat.completions.create(...)`` directly. All
-    keyword arguments (model, temperature, messages, response_format, ...)
-    are forwarded unchanged. Each call also appends one metadata record
-    to the run log (``run_log_path()``); the response is returned as-is.
-
-    Default backend is OpenAI, unchanged. Pass ``backend="ollama"`` to use
-    the local Ollama server (see ``_ollama_complete``).
+    Keyword arguments: model, messages, temperature, seed, max_tokens,
+    response_format, think. Each call appends one metadata record to the run
+    log (``run_log_path()``). The answer comes back in the chat-completion
+    shape: ``response.choices[0].message.content``.
     """
-    backend = kwargs.pop("backend", "openai")
-    if backend == "ollama":
-        return _ollama_complete(kwargs)
-    if backend != "openai":
-        raise ValueError(f"unknown backend: {backend!r}")
-    started = time.perf_counter()
-    try:
-        response = get_client().chat.completions.create(**kwargs)
-    except Exception as exc:
-        _log_run(kwargs, started, response=None, error=type(exc).__name__)
-        raise
-    _log_run(kwargs, started, response=response, error=None)
-    return response
+    backend = kwargs.pop("backend", "ollama")
+    if backend != "ollama":
+        raise ValueError(f"unknown backend: {backend!r} (only 'ollama' is supported)")
+    return _ollama_complete(kwargs)
 
 
 def _ollama_url() -> str:
@@ -139,7 +114,7 @@ def ollama_running() -> bool:
 
 
 def _ollama_complete(kwargs: dict) -> Any:
-    """Chat call to Ollama, returned in the OpenAI response shape.
+    """Chat call to Ollama, returned in the chat-completion response shape.
 
     Maps: temperature, seed, top_p -> options; max_tokens -> num_predict;
     num_ctx -> options; response_format {"type":"json_schema","schema":S}
@@ -160,7 +135,7 @@ def _ollama_complete(kwargs: dict) -> Any:
         "stream": False,
         "options": options,
     }
-    if "think" in kwargs:
+    if kwargs.get("think") is not None:
         payload["think"] = kwargs["think"]
     rf = kwargs.get("response_format")
     if isinstance(rf, dict):
@@ -199,7 +174,7 @@ def _prompt_hash(messages: Any) -> str:
 
 
 def _field(obj: Any, name: str) -> Any:
-    """Read ``name`` from an SDK object or a plain dict (fakes in tests)."""
+    """Read ``name`` from an object or a plain dict (fakes in tests)."""
     if isinstance(obj, dict):
         return obj.get(name)
     return getattr(obj, name, None)
@@ -230,9 +205,3 @@ def _log_run(kwargs: dict, started: float, response: Any, error: str | None,
             fh.write(json.dumps(record, default=str) + "\n")
     except OSError:
         pass
-
-
-def reset_client() -> None:
-    """Drop the cached client so the next call() rebuilds it. Tests only."""
-    global _client
-    _client = None

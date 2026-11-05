@@ -14,13 +14,13 @@ Research and demo software. Not a medical device. Synthetic cases only.
 **Builds on what exists (do not start over):**
 - `clinical_engine.py`: SBAR parsing, `researcher_search`, `run_committee`, `build_output`.
 - `pubmed_client.py`: PubMed search and the evidence ladder (RCT/meta-analysis/review, then guidelines, then observational, then case reports).
-- `adapters/llm.py`: one entry point for model calls, with a run log (no prompt text). Today it only talks to OpenAI.
+- `adapters/llm.py`: one entry point for model calls, with a run log (no prompt text). It talks to local Ollama only.
 - `adapters/citations.py`: PMID check and `[N]` check (built, not wired; GOVERNANCE R2).
 - `docs/GOVERNANCE.md` section 7: R1 (pinned models, seed), R2 (citations wired), R3 (synthetic eval set), R4 (reviewer sign-off), R5 (schema-checked model JSON), R6 (PHI guard), R7 (disclaimer in UI).
 
 **Non-goals.**
 - No clinical use. No real patient data. No diagnosis for a real person.
-- No cloud model in the debate. Local only (Ollama). The existing OpenAI path stays as is.
+- No cloud model in the debate. Local only (Ollama). The app also runs on Ollama.
 - No training or fine-tuning.
 - No claim that the debate is "more correct" than one model. We measure it (section 7).
 - No new web UI in the first steps. Output is a file and the existing minutes view.
@@ -134,7 +134,7 @@ Settings (one config file, logged per turn):
 - Model **digest** (not only the tag) recorded in the run log. This closes GOVERNANCE R1 for local models.
 - The same seed may not give the same text on different hardware. Step 3 measures this and reports it. We do not promise identical output.
 
-`adapters/llm.py` gets a second backend (Ollama) behind the same `complete()` call and run log. The OpenAI path is not changed.
+`adapters/llm.py` gets a second backend (Ollama) behind the same `complete()` call and run log. It is now the only backend.
 
 ## 6. Safety and governance
 
@@ -155,7 +155,7 @@ Settings (one config file, logged per turn):
 **Compared arms** (same cases, same evidence list):
 - A: single local model, one pass.
 - B: proposer + critics debate (this spec).
-- C (optional): the existing OpenAI committee, as a reference.
+- C (optional): the earlier committee, as a reference.
 
 **Scores** (mostly computed by code):
 1. Schema-valid turns, share of all turns.

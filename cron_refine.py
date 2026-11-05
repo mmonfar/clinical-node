@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 
 from dotenv import load_dotenv
 
-from adapters.llm import complete
+from adapters.llm import agent_kwargs, complete
 import pubmed_client
 import state_manager
 
@@ -93,7 +93,7 @@ def _find_new_articles(case: dict, fresh_articles: list) -> list:
 
 def _check_contradiction(minutes_text: str, new_articles: list) -> tuple[bool, str]:
     """
-    Use GPT-4o to determine if new articles contradict the recorded minutes.
+    Use the local model to determine if new articles contradict the recorded minutes.
 
     Returns (is_contradiction: bool, dissent_text: str).
     """
@@ -123,7 +123,7 @@ def _check_contradiction(minutes_text: str, new_articles: list) -> tuple[bool, s
 
     try:
         response = complete(
-            model="gpt-4o",
+            **agent_kwargs("refine"),
             temperature=0.0,
             response_format={"type": "json_object"},
             messages=[

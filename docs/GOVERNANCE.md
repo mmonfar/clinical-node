@@ -16,21 +16,19 @@ clinical advice.** Every case used to build and test it is fictional.
 
 | Step | Function | Model | Temp | Output |
 |---|---|---|---|---|
-| SBAR extraction | `parse_sbar_from_text` | gpt-4o-mini | 0.0 | JSON |
-| PubMed query | `build_pubmed_query` | gpt-4o-mini | 0.0 | text |
-| Pillar queries (thin evidence only) | `build_pillar_queries` | gpt-4o-mini | 0.0 | JSON |
-| Researcher synthesis | `researcher_synthesize` | gpt-4o-mini | 0.0 | text, cites `[N]` |
-| MDT roundtable | `mdt_roundtable_review` | gpt-4o | 0.25 | JSON, `citations: list[int]` |
-| Auditor minutes | `auditor_record` | gpt-4o-mini | 0.0 | Markdown |
-| 72-h contradiction check | `cron_refine._check_contradiction` | gpt-4o | 0.0 | JSON |
+| SBAR extraction | `parse_sbar_from_text` | qwen3:8b | 0.0 | JSON |
+| PubMed query | `build_pubmed_query` | qwen3:8b | 0.0 | text |
+| Pillar queries (thin evidence only) | `build_pillar_queries` | qwen3:8b | 0.0 | JSON |
+| Researcher synthesis | `researcher_synthesize` | qwen3:8b | 0.0 | text, cites `[N]` |
+| MDT roundtable | `mdt_roundtable_review` | gemma4:12b | 0.25 | JSON, `citations: list[int]` |
+| Auditor minutes | `auditor_record` | qwen3:8b | 0.0 | Markdown |
+| 72-h contradiction check | `cron_refine._check_contradiction` | gemma4:12b | 0.0 | JSON |
 
 - **One entry point.** All 7 calls go through `adapters/llm.complete()`: one
-  lazily built client, 60 s timeout, OpenAI SDK default of 2 retries
+  local Ollama call, one config dict `AGENT_MODELS` for the model per agent
   (`tests/test_llm_adapter.py`).
-- **Parameters.** No `max_tokens`, no `seed`. Model ids are aliases
-  (`gpt-4o`, `gpt-4o-mini`), not dated snapshots, so the provider can change
-  the model underneath. Since `420d43c` the *returned* model id is logged per
-  call, so a silent change is at least visible.
+- **Parameters.** No `max_tokens`, no `seed`. Model ids are Ollama tags;
+  the model digest is logged per call, so a changed model is visible.
 - **Prompts** are inline string literals in `clinical_engine.py` and
   `cron_refine.py`. They are versioned by git only; there is no prompt id.
   The roundtable prompt hard-codes reversal-agent and CrCl renal-dosing checks.
@@ -77,12 +75,12 @@ The run log (`adapters/llm.py`, `tests/test_run_log.py`) makes cost, latency
 and model drift measurable. What it cannot do yet: link a call to a case
 (no run id), or reproduce a run (prompt text is not stored, by design, and
 the model alias floats). The minutes' author line is a hard-coded label
-("Auditor (GPT-4o-mini)"), not the model id actually returned.
+(the configured Auditor model name), not the model id actually returned.
 
 ## 3. How feedback flows
 
 - **Machine → human:** every 72 h `cron_refine.py` re-queries PubMed; if
-  gpt-4o judges new articles contradictory, the case becomes `needs_review`
+  the local model judges new articles contradictory, the case becomes `needs_review`
   and a dissent block is appended to its minutes.
 - **Human → system: nothing is captured.** There is no rating, correction or
   sign-off; a clinician's judgement of an output is not stored anywhere and
@@ -90,7 +88,7 @@ the model alias floats). The minutes' author line is a hard-coded label
 
 ## 4. Data handling
 
-- Free text typed into the chat goes to the OpenAI API (a third party) as-is.
+- Free text typed into the chat goes to the local Ollama server on this machine as-is.
   **There is no de-identification.** Nothing stops a user pasting real
   patient details; only the README disclaimer says not to.
 - Runtime data (`cases.json`, `minutes/`, `logs/`) stays on the local disk

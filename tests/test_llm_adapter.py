@@ -1,118 +1,80 @@
 """
-Tests for the Tier-3 fix: adapters/llm.py.
-
-No network, no API key. Covers:
-- importing the engine modules with OPENAI_API_KEY unset (the bug the
-  architecture audit found: the old module-level ``OpenAI(api_key=...)``
-  raised KeyError at import time);
-- that complete() passes the configured timeout to the OpenAI client,
-  using a fake client instead of a real network call.
+Tests for adapters/llm.py (local Ollama only). No network, no API key:
+a fake model stands in for Ollama. Synthetic text only.
 """
 
 import importlib
-import os
+import json
 import sys
 
 import pytest
 
+from adapters import llm
 
-@pytest.fixture(autouse=True)
-def _clean_key(monkeypatch):
-    """Ensure OPENAI_API_KEY is unset unless a test opts in."""
+SYNTHETIC = "Synthetic test patient: fictional 60-year-old with cough."
+INSTALLED = {"medgemma:4b", "qwen3:4b", "qwen3:8b", "qwen2.5:7b", "gemma4:12b",
+             "gpt-oss:20b", "granite4.2:8b", "hermes3:latest"}
+SBAR = {"situation": "s", "background": "b", "assessment": "a", "recommendation": "r"}
+
+
+class FakeModel:
+    """Records every call and answers with fixed JSON. Replaces llm._http_json."""
+
+    def __init__(self):
+        self.calls = []
+
+    def __call__(self, path, payload=None, timeout=0):
+        if path == "/api/tags":
+            return {"models": []}
+        self.calls.append(payload)
+        return {"model": payload["model"], "message": {"content": json.dumps(SBAR)},
+                "prompt_eval_count": 1, "eval_count": 1}
+
+
+@pytest.fixture
+def fake(monkeypatch, tmp_path):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    yield
+    monkeypatch.setenv("CLINICAL_NODE_RUN_LOG", str(tmp_path / "r.jsonl"))
+    f = FakeModel()
+    monkeypatch.setattr(llm, "_http_json", f)
+    return f
 
 
-def test_import_clinical_engine_without_api_key():
-    """Importing the engine must not require OPENAI_API_KEY to be set."""
-    sys.modules.pop("clinical_engine", None)
-    sys.modules.pop("adapters.llm", None)
-    module = importlib.import_module("clinical_engine")
-    assert module is not None
-
-
-def test_import_cron_refine_without_api_key():
-    """Same fix, second call site module."""
-    sys.modules.pop("cron_refine", None)
-    sys.modules.pop("adapters.llm", None)
-    module = importlib.import_module("cron_refine")
-    assert module is not None
-
-
-def test_import_adapters_llm_without_api_key():
-    """adapters.llm itself must be importable with no key set (lazy client)."""
-    sys.modules.pop("adapters.llm", None)
-    module = importlib.import_module("adapters.llm")
-    assert module.get_client is not None
-
-
-def test_get_client_raises_only_when_actually_used(monkeypatch):
-    """The KeyError the audit found should now surface only on first use,
-    not at import time -- and only when the key really is missing."""
-    from adapters import llm
-
-    llm.reset_client()
+def test_import_modules_without_api_key(monkeypatch):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    with pytest.raises(KeyError):
-        llm.get_client()
+    for name in ("clinical_engine", "cron_refine"):
+        sys.modules.pop(name, None)
+        assert importlib.import_module(name) is not None
 
 
-def test_complete_passes_configured_timeout_to_client(monkeypatch):
-    """complete() must route through a client built with DEFAULT_TIMEOUT."""
-    from adapters import llm
-
-    llm.reset_client()
-    monkeypatch.setenv("OPENAI_API_KEY", "test-key-not-real")
-
-    captured = {}
-
-    class FakeCompletions:
-        def create(self, **kwargs):
-            captured["create_kwargs"] = kwargs
-            return {"choices": [{"message": {"content": "{}"}}]}
-
-    class FakeChat:
-        def __init__(self):
-            self.completions = FakeCompletions()
-
-    class FakeClient:
-        def __init__(self, api_key=None, timeout=None):
-            captured["api_key"] = api_key
-            captured["timeout"] = timeout
-            self.chat = FakeChat()
-
-    monkeypatch.setattr(llm, "OpenAI", FakeClient)
-    llm.reset_client()
-
-    result = llm.complete(model="gpt-4o-mini", messages=[{"role": "user", "content": "hi"}])
-
-    assert captured["timeout"] == llm.DEFAULT_TIMEOUT
-    assert captured["api_key"] == "test-key-not-real"
-    assert captured["create_kwargs"]["model"] == "gpt-4o-mini"
-    assert result == {"choices": [{"message": {"content": "{}"}}]}
-
-    llm.reset_client()
+def test_no_cloud_client_in_adapter():
+    assert not hasattr(llm, "OpenAI") and not hasattr(llm, "get_client")
 
 
-def test_client_is_constructed_only_once(monkeypatch):
-    """The client should be built lazily but cached across calls."""
-    from adapters import llm
+def test_default_backend_is_ollama(fake):
+    llm.complete(model="qwen3:8b", messages=[{"role": "user", "content": SYNTHETIC}])
+    assert fake.calls and fake.calls[0]["model"] == "qwen3:8b"
 
-    llm.reset_client()
-    monkeypatch.setenv("OPENAI_API_KEY", "test-key-not-real")
 
-    build_count = {"n": 0}
+def test_unknown_backend_refused(fake):
+    with pytest.raises(ValueError):
+        llm.complete(backend="openai", model="x", messages=[])
+    assert fake.calls == []
 
-    class FakeClient:
-        def __init__(self, api_key=None, timeout=None):
-            build_count["n"] += 1
 
-    monkeypatch.setattr(llm, "OpenAI", FakeClient)
-    llm.reset_client()
+def test_every_agent_model_is_installed():
+    assert set(llm.AGENT_MODELS) >= {"sbar", "researcher", "mdt", "auditor", "refine"}
+    for cfg in llm.AGENT_MODELS.values():
+        assert cfg["model"] in INSTALLED
 
-    llm.get_client()
-    llm.get_client()
-    llm.get_client()
 
-    assert build_count["n"] == 1
-    llm.reset_client()
+def test_engine_agents_use_their_configured_model(fake, monkeypatch):
+    import clinical_engine as ce
+    monkeypatch.setattr(llm, "AGENT_MODELS", {
+        "sbar": {"model": "m-sbar"}, "researcher": {"model": "m-res"},
+        "mdt": {"model": "m-mdt"}, "auditor": {"model": "m-aud"},
+        "refine": {"model": "m-ref"}})
+    ce.parse_sbar_from_text(SYNTHETIC)
+    assert fake.calls[-1]["model"] == "m-sbar"
+    ce.build_pubmed_query(SBAR)
+    assert fake.calls[-1]["model"] == "m-res"

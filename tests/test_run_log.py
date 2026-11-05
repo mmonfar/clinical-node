@@ -1,7 +1,7 @@
 """
 Tests for the append-only run log in adapters/llm.complete().
 
-No network, no API key: a fake client stands in for OpenAI, and the log is
+No network, no API key: a fake model stands in for Ollama, and the log is
 redirected to tmp_path. The case text used here is synthetic.
 """
 
@@ -14,33 +14,29 @@ from adapters import llm
 SYNTHETIC_CASE = "Synthetic test patient: 70-year-old with fictional fracture."
 
 
-def _install_fake(monkeypatch, response=None, raises=None):
-    class FakeCompletions:
-        def create(self, **kwargs):
-            if raises:
-                raise raises
-            return response
+def _install_fake(monkeypatch, raises=None):
+    def fake_http(path, payload=None, timeout=0):
+        if path == "/api/tags":
+            return {"models": [{"name": "qwen3:8b", "digest": "abc123"}]}
+        if raises:
+            raise raises
+        return {"model": "qwen3:8b", "message": {"content": "{}"},
+                "prompt_eval_count": 12, "eval_count": 3}
 
-    class FakeClient:
-        def __init__(self, api_key=None, timeout=None):
-            self.chat = type("Chat", (), {"completions": FakeCompletions()})()
-
-    monkeypatch.setenv("OPENAI_API_KEY", "test-key-not-real")
-    monkeypatch.setattr(llm, "OpenAI", FakeClient)
-    llm.reset_client()
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setattr(llm, "_http_json", fake_http)
 
 
 @pytest.fixture
 def log_path(tmp_path, monkeypatch):
     path = tmp_path / "runs.jsonl"
     monkeypatch.setenv("CLINICAL_NODE_RUN_LOG", str(path))
-    yield path
-    llm.reset_client()
+    return path
 
 
 def _call():
     return llm.complete(
-        model="gpt-4o-mini",
+        model="qwen3:8b",
         temperature=0.0,
         response_format={"type": "json_object"},
         messages=[{"role": "user", "content": SYNTHETIC_CASE}],
@@ -48,19 +44,13 @@ def _call():
 
 
 def test_complete_appends_metadata_record(monkeypatch, log_path):
-    fake = {
-        "model": "gpt-4o-mini-2024-07-18",
-        "usage": {"prompt_tokens": 12, "completion_tokens": 3},
-        "choices": [{"message": {"content": "{}"}}],
-    }
-    _install_fake(monkeypatch, response=fake)
-
-    assert _call() is fake  # response passes through untouched
-
+    _install_fake(monkeypatch)
+    _call()
     (line,) = log_path.read_text(encoding="utf-8").splitlines()
     rec = json.loads(line)
-    assert rec["model_requested"] == "gpt-4o-mini"
-    assert rec["model_returned"] == "gpt-4o-mini-2024-07-18"
+    assert rec["model_requested"] == "qwen3:8b"
+    assert rec["model_returned"] == "qwen3:8b"
+    assert rec["model_digest"] == "abc123"
     assert rec["params"] == {"temperature": 0.0, "response_format": {"type": "json_object"}}
     assert rec["prompt_tokens"] == 12 and rec["completion_tokens"] == 3
     assert rec["ok"] is True and rec["error"] is None
@@ -69,7 +59,7 @@ def test_complete_appends_metadata_record(monkeypatch, log_path):
 
 
 def test_log_holds_no_prompt_text(monkeypatch, log_path):
-    _install_fake(monkeypatch, response={"model": "m", "choices": []})
+    _install_fake(monkeypatch)
     _call()
     raw = log_path.read_text(encoding="utf-8")
     assert "fracture" not in raw and "Synthetic" not in raw
@@ -77,7 +67,7 @@ def test_log_holds_no_prompt_text(monkeypatch, log_path):
 
 
 def test_log_is_append_only_and_hash_is_stable(monkeypatch, log_path):
-    _install_fake(monkeypatch, response={"model": "m", "choices": []})
+    _install_fake(monkeypatch)
     _call()
     _call()
     lines = [json.loads(x) for x in log_path.read_text(encoding="utf-8").splitlines()]
@@ -97,7 +87,5 @@ def test_unwritable_log_does_not_break_the_call(monkeypatch, tmp_path):
     blocker = tmp_path / "not-a-dir"
     blocker.write_text("x", encoding="utf-8")
     monkeypatch.setenv("CLINICAL_NODE_RUN_LOG", str(blocker / "runs.jsonl"))
-    fake = {"model": "m", "choices": []}
-    _install_fake(monkeypatch, response=fake)
-    assert _call() is fake
-    llm.reset_client()
+    _install_fake(monkeypatch)
+    assert _call().choices[0].message.content == "{}"
