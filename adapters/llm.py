@@ -163,6 +163,59 @@ def _ollama_complete(kwargs: dict) -> Any:
     return response
 
 
+RETRY_SEED_STEP, RETRY_REPEAT_PENALTY, RETRY_MIN_TEMP = 1000, 1.3, 0.3
+JSON_REPAIR_NOTE = ("Your last reply was not valid JSON. Reply again with one valid JSON "
+                    "object only, no other text.")
+
+
+def _retry_kwargs(kwargs: dict, repair: bool) -> dict:
+    """Same call with a new seed, a little heat and a repeat penalty."""
+    new = dict(kwargs)
+    new["seed"] = int(kwargs.get("seed", 0)) + RETRY_SEED_STEP
+    new["repeat_penalty"] = RETRY_REPEAT_PENALTY
+    new["temperature"] = max(float(kwargs.get("temperature", 0.0)), RETRY_MIN_TEMP)
+    if repair:
+        new["messages"] = list(kwargs.get("messages") or []) + [
+            {"role": "user", "content": JSON_REPAIR_NOTE}]
+    return new
+
+
+def _is_server_error(exc: Exception) -> bool:
+    import urllib.error
+    return isinstance(exc, urllib.error.HTTPError) and exc.code >= 500
+
+
+def complete_retry(parse_json: bool = False, **kwargs: Any) -> tuple[Any, Any, bool]:
+    """complete() with ONE bounded retry.
+
+    Retry on an HTTP 5xx (Ollama aborts a repeat loop with 500) or, when
+    ``parse_json`` is set, on a reply that is not valid JSON. The retry uses a
+    new seed, a repeat penalty and a small temperature. A JSON retry also asks
+    for valid JSON. A second failure is raised (JSON failure: ValueError).
+
+    Returns (response, parsed JSON or None, retried).
+    """
+    def attempt(kw: dict):
+        resp = complete(**kw)
+        parsed = None
+        if parse_json:
+            try:
+                parsed = json.loads(resp.choices[0].message.content)
+            except (json.JSONDecodeError, TypeError) as exc:
+                raise ValueError(f"model reply is not valid JSON: {exc}") from exc
+        return resp, parsed
+
+    try:
+        resp, parsed = attempt(kwargs)
+        return resp, parsed, False
+    except Exception as exc:
+        is_json = isinstance(exc, ValueError)
+        if not (is_json or _is_server_error(exc)):
+            raise
+        resp, parsed = attempt(_retry_kwargs(kwargs, repair=is_json))
+        return resp, parsed, True
+
+
 def run_log_path() -> Path:
     """Where complete() appends its audit records."""
     return Path(os.environ.get("CLINICAL_NODE_RUN_LOG") or DEFAULT_RUN_LOG)

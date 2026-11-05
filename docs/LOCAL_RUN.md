@@ -60,3 +60,11 @@ Mean time per case: about 1020 s (17 minutes); range 595 to 1281 s.
 - 8 of 14 cases not run (time).
 - Answer keys (`must_catch`) were not scored. Quality was not judged.
 - Search was offline, so evidence quality is untested.
+
+## Fixes since this run, not yet re-run
+
+These changes are covered by tests with fake models only. They have not been run on the live models.
+
+1. **Researcher HTTP 500.** A model call that fails with HTTP 5xx is retried once with a new seed, a repeat penalty and a small temperature. If pillar planning still fails, the engine uses the single-query search and records the reason in the result under `fallback`.
+2. **Bad JSON (MDT, 72-hour check).** A reply that is not valid JSON gets one retry that asks for valid JSON, with the same new seed and penalty. A second failure is raised as before (the 72-hour check still reports "failed" on stderr).
+3. **Citations without sources.** Code now checks every `[N]` in the MDT output and the Auditor minutes against the retrieved articles. A number with no article is removed from `citations` lists and marked `[NO EVIDENCE FOUND]` in text. `citations_removed` counts them. It cannot tell whether a real-numbered citation supports the claim, and it does not flag claims with no citation.

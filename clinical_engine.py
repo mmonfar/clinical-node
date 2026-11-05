@@ -18,7 +18,8 @@ from datetime import datetime, timezone
 
 from dotenv import load_dotenv
 
-from adapters.llm import agent_kwargs, agent_label, complete
+from adapters.llm import agent_kwargs, agent_label, complete, complete_retry
+from adapters.citations import count_refs, scrub_structure, scrub_text
 import pubmed_client
 import state_manager
 
@@ -176,7 +177,7 @@ def build_pubmed_query(sbar: dict) -> str:
         sbar.get("assessment", ""),
     ]))
 
-    response = complete(
+    response, _, _ = complete_retry(
         **agent_kwargs("researcher"),
         temperature=0.0,
         messages=[
@@ -215,7 +216,8 @@ def build_pillar_queries(sbar: dict, initial_query: str) -> dict:
         sbar.get("situation", ""),
         sbar.get("assessment", ""),
     ]))
-    response = complete(
+    _, parsed, _ = complete_retry(
+        parse_json=True,
         **agent_kwargs("researcher"),
         temperature=0.0,
         response_format={"type": "json_object"},
@@ -243,7 +245,7 @@ def build_pillar_queries(sbar: dict, initial_query: str) -> dict:
             },
         ],
     )
-    return json.loads(response.choices[0].message.content)
+    return parsed
 
 
 # ---------------------------------------------------------------------------
@@ -359,9 +361,12 @@ def researcher_search(query: str, sbar: dict | None = None) -> dict:
 
     All result dicts include: tier, articles, query, is_multi_pillar, pillars.
     """
+    fallback = {"reason": ""}
     _single = lambda tier, arts, q: {
         "tier": tier, "articles": arts, "query": q,
         "is_multi_pillar": False, "pillars": [],
+        # Non-empty when pillar planning failed and the single-query path was used.
+        "fallback": fallback["reason"],
     }
 
     # Tier 1 — highest quality
@@ -371,7 +376,13 @@ def researcher_search(query: str, sbar: dict | None = None) -> dict:
 
     # Trigger multi-pillar when initial query returns too few results
     if len(high) < MULTI_PILLAR_THRESHOLD and sbar is not None:
-        return _multi_pillar_search(query, sbar)
+        try:
+            return _multi_pillar_search(query, sbar)
+        except Exception as exc:  # planning failed after the bounded retry
+            fallback["reason"] = (
+                f"Pillar query planning failed after one retry ({type(exc).__name__}); "
+                "used the single-query search instead."
+            )
 
     # Tier 1b — guideline anchor: pivot to society consensus when RCTs scarce
     society_terms = "(NCCN OR AHA OR ESC OR ESMO OR NICE OR WHO OR consensus)"
@@ -446,7 +457,7 @@ def researcher_synthesize(sbar: dict, evidence: dict) -> str:
         abstract_block   = _format_abstracts(evidence.get("articles", []))
         pillar_instruction = ""
 
-    response = complete(
+    response, _, _ = complete_retry(
         **agent_kwargs("researcher"),
         temperature=0.0,
         messages=[
@@ -506,7 +517,8 @@ def mdt_roundtable_review(
 
     specialty_catalogue = json.dumps(MDT_SPECIALTIES, indent=2)
 
-    response = complete(
+    _, parsed, _ = complete_retry(
+        parse_json=True,
         **agent_kwargs("mdt"),
         temperature=0.25,
         response_format={"type": "json_object"},
@@ -569,7 +581,11 @@ def mdt_roundtable_review(
             },
         ],
     )
-    return json.loads(response.choices[0].message.content)
+    # Code check: a [N] with no retrieved article behind it is marked, never kept.
+    clean, removed = scrub_structure(parsed, count_refs(ref_list))
+    if isinstance(clean, dict):
+        clean["citations_removed"] = removed
+    return clean
 
 
 # Backward-compatible alias
@@ -639,7 +655,7 @@ def auditor_record(case_id: str, output: dict) -> str:
         if gap_banner else ""
     )
 
-    response = complete(
+    response, _, _ = complete_retry(
         **agent_kwargs("auditor"),
         temperature=0.0,
         messages=[
@@ -693,7 +709,8 @@ def auditor_record(case_id: str, output: dict) -> str:
             },
         ],
     )
-    minutes_text = response.choices[0].message.content
+    # Code check: no citation without a retrieved article reaches the minutes.
+    minutes_text, _removed = scrub_text(response.choices[0].message.content, len(articles))
 
     state_manager.append_minutes(
         case_id=case_id,

@@ -103,3 +103,72 @@ def check_evidence_refs(refs: list[str], records: list[dict]) -> list[dict]:
                 str(ids[ref].get("ref", "")).replace("PMID", "").strip()):
             flags.append({"ref": ref, "problem": "missing or malformed PMID"})
     return flags
+
+
+# ---------------------------------------------------------------------------
+# Scrub: code removes any citation that has no retrieved article behind it.
+# Code never invents a citation. A bad number is removed or marked.
+# ---------------------------------------------------------------------------
+
+NO_EVIDENCE = "NO EVIDENCE FOUND"
+_GROUP_RE = re.compile(r"\[(\s*\d+(?:\s*[,;–-]\s*\d+)*\s*)\]")
+
+
+def _scrub_group(match: re.Match, n_refs: int) -> str:
+    nums = [int(x) for x in re.findall(r"\d+", match.group(1))]
+    good = [n for n in nums if 1 <= n <= n_refs]
+    if len(good) == len(nums):
+        return match.group(0)
+    kept = "".join(f"[{n}]" for n in good)
+    return kept + f"[{NO_EVIDENCE}]"
+
+
+def scrub_text(text: str, n_refs: int) -> tuple[str, int]:
+    """Mark every [N] that points to no retrieved article.
+
+    Returns (clean text, number of bad numbers found). Valid [N] stay.
+    """
+    count = 0
+
+    def repl(m: re.Match) -> str:
+        nonlocal count
+        nums = [int(x) for x in re.findall(r"\d+", m.group(1))]
+        count += sum(1 for n in nums if not 1 <= n <= n_refs)
+        return _scrub_group(m, n_refs)
+
+    return _GROUP_RE.sub(repl, text or ""), count
+
+
+def scrub_structure(value, n_refs: int):
+    """Scrub every string in a nested dict/list and every ``citations`` list.
+
+    Returns (clean copy, number of bad citations removed or marked).
+    """
+    if isinstance(value, str):
+        return scrub_text(value, n_refs)
+    if isinstance(value, list):
+        out, total = [], 0
+        for v in value:
+            c, n = scrub_structure(v, n_refs)
+            out.append(c)
+            total += n
+        return out, total
+    if isinstance(value, dict):
+        out, total = {}, 0
+        for k, v in value.items():
+            if k == "citations" and isinstance(v, list):
+                good = [n for n in v if isinstance(n, int) and not isinstance(n, bool)
+                        and 1 <= n <= n_refs]
+                total += len(v) - len(good)
+                out[k] = good
+                continue
+            c, n = scrub_structure(v, n_refs)
+            out[k] = c
+            total += n
+        return out, total
+    return value, 0
+
+
+def count_refs(ref_list: str) -> int:
+    """Number of numbered references in a prompt reference list."""
+    return len(re.findall(r"(?m)^\[\d+\]", ref_list or ""))

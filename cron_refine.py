@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 
 from dotenv import load_dotenv
 
-from adapters.llm import agent_kwargs, complete
+from adapters.llm import agent_kwargs, complete_retry
 import pubmed_client
 import state_manager
 
@@ -122,7 +122,8 @@ def _check_contradiction(minutes_text: str, new_articles: list) -> tuple[bool, s
     )
 
     try:
-        response = complete(
+        _, result, _ = complete_retry(
+            parse_json=True,
             **agent_kwargs("refine"),
             temperature=0.0,
             response_format={"type": "json_object"},
@@ -131,12 +132,11 @@ def _check_contradiction(minutes_text: str, new_articles: list) -> tuple[bool, s
                 {"role": "user", "content": user_prompt},
             ],
         )
-        result = json.loads(response.choices[0].message.content)
         contradiction = bool(result.get("contradiction", False))
         dissent = str(result.get("dissenting_opinion", ""))
         return contradiction, dissent
     except Exception as exc:
-        print(f"  GPT contradiction check failed: {exc}", file=sys.stderr)
+        print(f"  Contradiction check failed: {exc}", file=sys.stderr)
         return False, ""
 
 
